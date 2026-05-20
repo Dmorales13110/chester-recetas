@@ -1,9 +1,15 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+// @ts-ignore: No type declarations for this JS module
 import Navbar from './components/Navbar'
+// @ts-ignore: No type declarations for this JS module
 import Footer from './components/Footer'
+// @ts-ignore: No type declarations for this JS module
 import HomePage from './pages/home/index'
+// @ts-ignore: No type declarations for this JS module
 import RecipesPage from './pages/recipes'
+// @ts-ignore: No type declarations for this JS module
 import CategoriesPage from './pages/categories'
+// @ts-ignore: No type declarations for this JS module
 import ContactPage from './pages/contact'
 
 //layout principal ignoren lo rojito no todo lo rojo es malo KJASKDASJD
