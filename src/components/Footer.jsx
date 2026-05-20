@@ -1,7 +1,7 @@
 import { Group, Text, ActionIcon, Container, Divider } from '@mantine/core'
 import { Mail, Heart, MapPin, Phone, Clock, ChefHat, Share2, Camera, MessageCircle, Video, Sparkles, DogIcon } from 'lucide-react'
 
-function Footer() {
+export default function Footer() {
   return (
     <div style={{ background: '#1a1a2e', color: '#aaa', marginTop: 60 }}>
       <Container size="xl" py="lg">
@@ -48,4 +48,3 @@ function Footer() {
   )
 }
 
-export default Footer
