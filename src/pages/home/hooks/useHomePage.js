@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import chesterimg from '../../../assets/image.png'
 
 // Mock data
 const featuredRecipes = [
@@ -81,7 +82,7 @@ const heroBackgrounds = [
     'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1920&h=600&fit=crop',
     'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=1920&h=600&fit=crop',
     'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1920&h=600&fit=crop',
-    './src/assets/image.png'
+    chesterimg
 ]
 
 export const useHomePage = () => {
