@@ -1,7 +1,7 @@
 import { Title, Text, SimpleGrid, Card, Group, ThemeIcon, Badge, Button } from '@mantine/core'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Star, Coffee, Salad, Pizza, Cake, Soup, Fish, Beef, UtensilsCrossed } from 'lucide-react'
+import { ArrowRight, Coffee, Salad, Pizza, Cake, Soup, Fish, Beef, UtensilsCrossed } from 'lucide-react'
 
 const iconMap = {
     Coffee: <Coffee size={24} />,
@@ -14,7 +14,6 @@ const iconMap = {
     UtensilsCrossed: <UtensilsCrossed size={24} />,
 }
 
-//categorias destacadas en la pagina de categorias, se muestran las 4 primeras categorias con su respectiva informacion y un link para ver todas las recetas de esa categoria
 const FeaturedCategories = ({ categories }) => {
     if (categories.length === 0) return null
 
@@ -22,8 +21,8 @@ const FeaturedCategories = ({ categories }) => {
         <>
             <Group justify="space-between" mb="lg">
                 <div>
-                    <Title order={2} c="#333">Categorías destacadas</Title>
-                    <Text c="dimmed">Las favoritas de nuestra comunidad</Text>
+                    <Title order={2} style={{ color: 'var(--text-h)' }}>Categorías destacadas</Title>
+                    <Text style={{ color: 'var(--text-secondary)' }}>Las favoritas de nuestra comunidad</Text>
                 </div>
                 <Button
                     component={Link}
@@ -57,6 +56,8 @@ const FeaturedCategories = ({ categories }) => {
                                 textDecoration: 'none',
                                 height: '100%',
                                 transition: 'all 0.3s',
+                                background: 'var(--card-bg)',
+                                borderColor: 'var(--border)'
                             }}
                         >
                             <Group justify="space-between" align="flex-start" mb="md">
@@ -73,10 +74,10 @@ const FeaturedCategories = ({ categories }) => {
                                 </Badge>
                             </Group>
 
-                            <Text fw={700} size="lg" c="#333" mb="xs">
+                            <Text fw={700} size="lg" mb="xs" style={{ color: 'var(--text-h)' }}>
                                 {category.name}
                             </Text>
-                            <Text size="sm" c="dimmed" mb="md" lineClamp={2}>
+                            <Text size="sm" mb="md" lineClamp={2} style={{ color: 'var(--text-secondary)' }}>
                                 {category.description}
                             </Text>
 

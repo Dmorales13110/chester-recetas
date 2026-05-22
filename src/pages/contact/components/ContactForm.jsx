@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Paper, TextInput, Textarea, Button, Group, Title, Text, Select, Alert, LoadingOverlay } from '@mantine/core'
+import { Paper, TextInput, Textarea, Button, Group, Title, Text, Select, Alert, LoadingOverlay, ThemeIcon } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { Mail, Phone, MapPin, Send, CheckCircle, MessageCircle, AlertCircle, Users, Star } from 'lucide-react'
+import { Mail, Phone, MapPin, Send, CheckCircle, MessageCircle, AlertCircle, Users, Star, Dog } from 'lucide-react'
 
 const contactTopics = [
     { value: 'consulta', label: 'Consulta general' },
@@ -11,7 +11,6 @@ const contactTopics = [
     { value: 'otro', label: 'Otro' },
 ]
 
-// formualario de contacto para que el usuario pueda reportar o enviar cualquier boberia
 const ContactForm = () => {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
@@ -42,7 +41,7 @@ const ContactForm = () => {
     }
 
     const getTopicIcon = (topic) => {
-        switch(topic) {
+        switch (topic) {
             case 'consulta': return <MessageCircle size={14} />
             case 'receta': return <Star size={14} />
             case 'problema': return <AlertCircle size={14} />
@@ -52,12 +51,36 @@ const ContactForm = () => {
     }
 
     return (
-        <Paper withBorder p="xl" radius="xl" bg="white" style={{ position: 'relative' }}>
+        <Paper withBorder p="xl" radius="xl" style={{
+            background: 'var(--card-bg)',
+            borderColor: 'var(--border)',
+            position: 'relative',
+            overflow: 'hidden',
+        }}>
+            {/* Decoración */}
+            <div style={{
+                position: 'absolute',
+                top: -50,
+                right: -50,
+                width: 150,
+                height: 150,
+                borderRadius: '50%',
+                background: 'var(--accent-bg)',
+                opacity: 0.5,
+            }} />
+
             <LoadingOverlay visible={isSubmitting} />
-            
-            <Title order={3} mb="xs">Envíanos un mensaje</Title>
-            <Text c="dimmed" mb="lg">
-                ¿Tienes preguntas, sugerencias o quieres reportar un problema? Escríbenos y te responderemos a la brevedad.
+
+            <Group gap="xs" mb="xs">
+                <ThemeIcon size="md" radius="xl" color="orange" variant="light">
+                    <Dog size={16} />
+                </ThemeIcon>
+                <Text size="sm" c="orange" fw={500}>¡Cuéntanos!</Text>
+            </Group>
+            <Title order={3} mb="xs" style={{ color: 'var(--text-h)' }}>Envíanos un mensaje</Title>
+            <Text style={{ color: 'var(--text-secondary)' }} mb="lg">
+                ¿Tienes preguntas, sugerencias o quieres reportar un problema?
+                <strong style={{ color: '#e67e22' }}> Chester</strong> te leerá con atención.
             </Text>
 
             {isSuccess && (
@@ -68,8 +91,9 @@ const ContactForm = () => {
                     mb="lg"
                     withCloseButton
                     onClose={() => setIsSuccess(false)}
+                    style={{ background: 'rgba(16, 185, 129, 0.1)', borderColor: '#10b981' }}
                 >
-                    Gracias por contactarnos. Te responderemos en menos de 24 horas.
+                    Gracias por contactarnos. ¡Chester te responderá en menos de 24 horas!
                 </Alert>
             )}
 
@@ -80,6 +104,21 @@ const ContactForm = () => {
                     {...form.getInputProps('name')}
                     mb="md"
                     radius="md"
+                    styles={{
+                        input: {
+                            backgroundColor: '#ffffff !important',
+                            border: '1px solid #e9ecef',
+                            color: '#1a1a2e !important',
+                            '&:focus': {
+                                borderColor: '#e67e22',
+                            }
+                        },
+                        label: {
+                            color: '#1a1a2e',
+                            marginBottom: 6,
+                            fontWeight: 500,
+                        }
+                    }}
                 />
                 <TextInput
                     label="Correo electrónico"
@@ -87,6 +126,21 @@ const ContactForm = () => {
                     {...form.getInputProps('email')}
                     mb="md"
                     radius="md"
+                    styles={{
+                        input: {
+                            backgroundColor: '#ffffff !important',
+                            border: '1px solid #e9ecef',
+                            color: '#1a1a2e !important',
+                            '&:focus': {
+                                borderColor: '#e67e22',
+                            }
+                        },
+                        label: {
+                            color: '#1a1a2e',
+                            marginBottom: 6,
+                            fontWeight: 500,
+                        }
+                    }}
                 />
                 <Select
                     label="Motivo de contacto"
@@ -94,6 +148,29 @@ const ContactForm = () => {
                     {...form.getInputProps('topic')}
                     mb="md"
                     radius="md"
+                    styles={{
+                        input: {
+                            backgroundColor: '#ffffff !important',
+                            border: '1px solid #e9ecef',
+                            color: '#1a1a2e !important',
+                        },
+                        label: {
+                            color: '#1a1a2e',
+                            marginBottom: 6,
+                            fontWeight: 500,
+                        },
+                        dropdown: {
+                            backgroundColor: '#ffffff',
+                            borderColor: '#e9ecef',
+                        },
+                        option: {
+                            color: '#1a1a2e',
+                            '&[data-selected]': {
+                                backgroundColor: '#e67e22',
+                                color: 'white',
+                            }
+                        }
+                    }}
                     renderOption={(option) => (
                         <Group gap="xs">
                             {getTopicIcon(option.value)}
@@ -108,24 +185,59 @@ const ContactForm = () => {
                     {...form.getInputProps('message')}
                     mb="lg"
                     radius="md"
+                    styles={{
+                        input: {
+                            backgroundColor: '#ffffff !important',
+                            border: '1px solid #e9ecef',
+                            color: '#1a1a2e !important',
+                            '&:focus': {
+                                borderColor: '#e67e22',
+                            }
+                        },
+                        label: {
+                            color: '#1a1a2e',
+                            marginBottom: 6,
+                            fontWeight: 500,
+                        }
+                    }}
                 />
-                <Button type="submit" color="orange" radius="xl" size="lg" fullWidth leftSection={<Send size={18} />}>
+                <Button
+                    type="submit"
+                    color="orange"
+                    radius="xl"
+                    size="lg"
+                    fullWidth
+                    leftSection={<Send size={18} />}
+                    style={{
+                        background: 'linear-gradient(135deg, #e67e22, #f39c12)',
+                        border: 'none',
+                        transition: 'all 0.2s',
+                    }}
+                    styles={{
+                        root: {
+                            '&:hover': {
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 10px 20px -5px rgba(230, 126, 34, 0.3)',
+                            }
+                        }
+                    }}
+                >
                     Enviar mensaje
                 </Button>
             </form>
 
-            <Group justify="space-between" mt="xl" pt="md" style={{ borderTop: '1px solid #eee' }}>
+            <Group justify="space-between" mt="xl" pt="md" style={{ borderTop: `1px solid var(--border)` }}>
                 <Group gap="xs">
                     <Mail size={16} color="#e67e22" />
-                    <Text size="sm">hola@chesterrecetas.com</Text>
+                    <Text size="sm" style={{ color: 'var(--text-secondary)' }}>hola@chesterrecetas.com</Text>
                 </Group>
                 <Group gap="xs">
                     <Phone size={16} color="#e67e22" />
-                    <Text size="sm">+34 900 123 456</Text>
+                    <Text size="sm" style={{ color: 'var(--text-secondary)' }}>+34 900 123 456</Text>
                 </Group>
                 <Group gap="xs">
                     <MapPin size={16} color="#e67e22" />
-                    <Text size="sm">Madrid, España</Text>
+                    <Text size="sm" style={{ color: 'var(--text-secondary)' }}>Chesterjaus, Venezuela</Text>
                 </Group>
             </Group>
         </Paper>

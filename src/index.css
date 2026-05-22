@@ -1,111 +1,484 @@
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --text: #3a3a4a;
+  --text-h: #1a1a2e;
+  --bg: #ffffff;
+  --bg-secondary: #f4f4f6;
+  --border: #e2e2e8;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --input-text: #1a1a2e;
+  --text-secondary: #5a5a6e;
+  --code-bg: #f0f0f2;
+  --accent: #e67e22;           /* Naranja más oscuro y vibrante */
+  --accent-hover: #f39c12;     /* Naranja hover */
+  --accent-dark: #d35400;      /* Naranja muy oscuro para estados activos */
+  --accent-bg: rgba(230, 126, 34, 0.12);  /* Fondo acento más visible */
+  --accent-soft: #fdf5e6;      /* Fondo naranja suave */
+  --social-bg: #f8f8fa;
+  --shadow: rgba(0, 0, 0, 0.08) 0 2px 12px;
+  --shadow-hover: rgba(0, 0, 0, 0.12) 0 4px 20px;
+  --modal-bg: #ffffff;
+  --icon-color: #4a4a5a;       /* Color base para iconos más oscuro */
+  --icon-hover: #e67e22;       /* Iconos hover naranja */
 
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
+  font: 16px/145% var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
   color: var(--text);
   background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+}
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
+.dark-mode {
+  --text: #cbd5e1;
+  --text-h: #f1f5f9;
+  --bg: #0f172a;
+  --bg-secondary: #1e293b;
+  --border: #334155;
+  --card-bg: #1e293b;
+  --input-bg: #1e293b;
+  --input-text: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --code-bg: #1e293b;
+  --accent: #f5a623;
+  --accent-hover: #f7b53e;
+  --accent-dark: #e67e22;
+  --accent-bg: rgba(245, 166, 35, 0.15);
+  --accent-soft: rgba(245, 166, 35, 0.08);
+  --social-bg: #1e293b;
+  --shadow: rgba(0, 0, 0, 0.3) 0 2px 12px;
+  --shadow-hover: rgba(0, 0, 0, 0.4) 0 4px 20px;
+  --modal-bg: #1e293b;
+  --icon-color: #94a3b8;
+  --icon-hover: #f5a623;
+}
+
+/* Iconos generales */
+svg, .mantine-ThemeIcon-root svg {
+  color: var(--icon-color);
+  transition: all 0.2s ease;
+}
+
+/* Iconos dentro de ThemeIcon */
+.mantine-ThemeIcon-root {
+  background-color: var(--accent-bg) !important;
+  color: var(--accent) !important;
+  transition: all 0.2s ease !important;
+}
+
+.mantine-ThemeIcon-root svg {
+  color: var(--accent) !important;
+}
+
+.mantine-ThemeIcon-root:hover {
+  transform: scale(1.08);
+  background-color: rgba(230, 126, 34, 0.2) !important;
+}
+
+/* Iconos en botones */
+.mantine-Button-root svg {
+  color: currentColor;
+  transition: all 0.2s ease;
+}
+
+/* Iconos en ActionIcon */
+.mantine-ActionIcon-root {
+  color: var(--icon-color) !important;
+  transition: all 0.2s ease !important;
+}
+
+.mantine-ActionIcon-root:hover {
+  color: var(--icon-hover) !important;
+  background-color: var(--accent-bg) !important;
+  transform: translateY(-2px);
+}
+
+/* Iconos en enlaces */
+a svg {
+  transition: all 0.2s ease;
+}
+
+a:hover svg {
+  color: var(--accent);
+  transform: translateX(3px);
+}
+
+/* Botones primarios */
+.mantine-Button-root {
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer;
+}
+
+.mantine-Button-root:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.mantine-Button-root:active {
+  transform: translateY(0);
+}
+
+/* Botón principal (naranja) */
+.mantine-Button-filled {
+  background: linear-gradient(135deg, #e67e22, #f39c12) !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(230, 126, 34, 0.3) !important;
+}
+
+.mantine-Button-filled:hover {
+  background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+  box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4) !important;
+}
+
+/* Botón sutil (light) */
+.mantine-Button-light {
+  background-color: var(--accent-bg) !important;
+  color: var(--accent) !important;
+  border: 1px solid rgba(230, 126, 34, 0.2) !important;
+}
+
+.mantine-Button-light:hover {
+  background-color: rgba(230, 126, 34, 0.2) !important;
+  transform: translateY(-2px);
+}
+
+/* Botón sutil (subtle) */
+.mantine-Button-subtle {
+  color: var(--text) !important;
+  background-color: transparent !important;
+}
+
+.mantine-Button-subtle:hover {
+  background-color: var(--accent-bg) !important;
+  color: var(--accent) !important;
+}
+
+/* Botón outline */
+.mantine-Button-outline {
+  border: 2px solid var(--accent) !important;
+  color: var(--accent) !important;
+  background-color: transparent !important;
+}
+
+.mantine-Button-outline:hover {
+  background-color: var(--accent-bg) !important;
+  transform: translateY(-2px);
+}
+
+/* ============================================
+   ICONOS EN NAVBAR ESPECÍFICOS
+   ============================================ */
+
+/* Modo claro - Iconos navbar más oscuros */
+:root .mantine-ActionIcon-root.navbar-icon {
+  color: #4a4a5a !important;
+  background-color: transparent !important;
+}
+
+:root .mantine-ActionIcon-root.navbar-icon:hover {
+  background-color: rgba(230, 126, 34, 0.12) !important;
+  color: #e67e22 !important;
+  transform: translateY(-2px);
+}
+
+:root .mantine-Button-root.navbar-button svg {
+  color: #4a4a5a !important;
+}
+
+:root .mantine-Button-root.navbar-button:hover svg {
+  color: #e67e22 !important;
+}
+
+/* ============================================
+   ICONOS EN CARD Y COMPONENTES
+   ============================================ */
+
+/* Iconos en cards */
+.mantine-Card-root .mantine-ThemeIcon-root svg {
+  color: var(--accent) !important;
+}
+
+/* Iconos en listas */
+.mantine-List-item svg {
+  color: var(--accent) !important;
+}
+
+/* Iconos en badges */
+.mantine-Badge-root svg {
+  color: currentColor;
+  margin-right: 4px;
+}
+
+/* Iconos en inputs */
+.mantine-TextInput-section svg,
+.mantine-Select-section svg {
+  color: var(--icon-color) !important;
+}
+
+.mantine-TextInput-section svg:hover,
+.mantine-Select-section svg:hover {
+  color: var(--accent) !important;
+}
+
+/* ============================================
+   BOTONES EN CARDS Y SECCIONES
+   ============================================ */
+
+/* Botones dentro de cards */
+.mantine-Card-root .mantine-Button-root {
+  width: 100%;
+}
+
+/* Botón "Ver más" */
+.button-view-more {
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.button-view-more:hover svg {
+  transform: translateX(5px);
+}
+
+:root input,
+:root textarea,
+:root select {
+  background-color: #ffffff !important;
+  color: #1a1a2e !important;
+  border: 1px solid #d4d4dc !important;
+}
+
+:root input:focus,
+:root textarea:focus,
+:root select:focus {
+  border-color: #e67e22 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.15) !important;
+}
+
+:root input::placeholder,
+:root textarea::placeholder {
+  color: #9a9aae !important;
+}
+
+/* Cards con borde más visible */
+.mantine-Card-root {
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.mantine-Card-root:hover {
+  box-shadow: var(--shadow-hover) !important;
+  border-color: var(--accent) !important;
+}
+
+/* Badges más visibles */
+.mantine-Badge-root {
+  font-weight: 600 !important;
+  background-color: var(--accent-bg) !important;
+  color: var(--accent) !important;
+  border: 1px solid rgba(230, 126, 34, 0.2) !important;
+}
+
+/* Tabs más visibles */
+.mantine-Tabs-tab {
+  font-weight: 500 !important;
+}
+
+.mantine-Tabs-tab[data-active="true"] {
+  color: #e67e22 !important;
+  font-weight: 600 !important;
+  border-bottom-width: 2px !important;
+}
+
+/* Acordeón mejorado */
+.mantine-Accordion-item {
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.mantine-Accordion-control {
+  font-weight: 600 !important;
+}
+
+/* Segmented control mejorado */
+.mantine-SegmentedControl-root {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.mantine-SegmentedControl-label {
+  font-weight: 500 !important;
+}
+
+.mantine-SegmentedControl-label[data-active="true"] {
+  color: white !important;
+  background: linear-gradient(135deg, #e67e22, #f39c12) !important;
+}
+
+:root .mantine-Button-root.navbar-button,
+:root button.navbar-button {
+  color: #3a3a4a !important;
+  background-color: transparent !important;
+  font-weight: 500 !important;
+}
+
+:root .mantine-Button-root.navbar-button:hover,
+:root button.navbar-button:hover {
+  background-color: rgba(230, 126, 34, 0.12) !important;
+  color: #e67e22 !important;
+  transform: translateY(-2px);
+}
+
+:root .mantine-ActionIcon-root.navbar-icon {
+  color: #4a4a5a !important;
+  background-color: transparent !important;
+}
+
+:root .mantine-ActionIcon-root.navbar-icon:hover {
+  background-color: rgba(230, 126, 34, 0.12) !important;
+  color: #e67e22 !important;
+  transform: translateY(-2px);
+}
+
+:root .mantine-Avatar-root.navbar-avatar {
+  background-color: rgba(230, 126, 34, 0.12) !important;
+  color: #e67e22 !important;
+  font-weight: 600 !important;
+}
+
+:root .mantine-Avatar-root.navbar-avatar:hover {
+  background-color: rgba(230, 126, 34, 0.2) !important;
+  transform: scale(1.05);
+}
+
+:root .mantine-Menu-item.navbar-menu-item {
+  color: #3a3a4a !important;
+  font-weight: 500 !important;
+}
+
+:root .mantine-Menu-item.navbar-menu-item:hover {
+  background-color: rgba(230, 126, 34, 0.12) !important;
+  color: #e67e22 !important;
+}
+
+:root .mantine-Menu-item.navbar-menu-item:hover svg {
+  color: #e67e22 !important;
+}
+
+:root .mantine-Indicator-indicator {
+  background-color: #e67e22 !important;
+  border: 2px solid white !important;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.05) !important;
+}
+
+.dark-mode .mantine-Indicator-indicator {
+  border: 2px solid #0f172a !important;
+}
+
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4c4cc;
+  border-radius: 10px;
+  border: 2px solid var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e67e22;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: #4a4a5a;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: #f5a623;
+}
+
+/* ============================================
+   SELECTS MEJORADOS
+   ============================================ */
+
+/* Modo claro - Selects más visibles */
+:root .mantine-Select-dropdown {
+  background-color: #ffffff !important;
+  border: 1px solid #d4d4dc !important;
+  border-radius: 12px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+:root .mantine-Select-option {
+  color: #1a1a2e !important;
+  font-weight: 500 !important;
+}
+
+:root .mantine-Select-option:hover {
+  background-color: rgba(230, 126, 34, 0.12) !important;
+  color: #e67e22 !important;
+}
+
+:root .mantine-Select-option[data-selected="true"] {
+  background-color: #e67e22 !important;
+  color: white !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
+.fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
 
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+@keyframes iconBounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
   }
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+.icon-bounce:hover svg {
+  animation: iconBounce 0.3s ease;
 }
 
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+/* Responsive */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.75rem;
   }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+  h2 {
+    font-size: 1.25rem;
   }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  body {
+    font-size: 14px;
+  }
+  .mantine-Paper-root {
+    border-radius: 20px !important;
+  }
+  .mantine-Modal-content {
+    border-radius: 20px !important;
+  }
 }

@@ -15,7 +15,6 @@ export default function HomePage() {
         isLoading,
         featuredRecipes,
         categories,
-        testimonials,
         heroBackgrounds,
         handleSubscribe,
     } = useHomePage()
@@ -33,9 +32,9 @@ export default function HomePage() {
             <HeroSection backgrounds={heroBackgrounds} />
             <StatsSection />
             <CategoriesSection categories={categories} />
-            <FeaturedRecipes recipes={featuredRecipes} />
+            <FeaturedRecipes recipes={featuredRecipes} title="Los favoritos de Chester" />
             <FeaturesSection />
-            <TestimonialsSection testimonials={testimonials} />
+            <TestimonialsSection />
             <NewsletterSection email={email} setEmail={setEmail} onSubscribe={handleSubscribe} />
         </Box>
     )

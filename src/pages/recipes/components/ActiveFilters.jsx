@@ -25,13 +25,10 @@ const ActiveFilters = ({
         return labels
     }
 
-    //efecto de filtros activos que se muestra debajo del header
-    //molleja de sueno tengooooo
-
     return (
         <Group justify="space-between" mb="md">
             <Group gap="xs" wrap="wrap">
-                <Text size="sm" c="dimmed">Filtros activos:</Text>
+                <Text size="sm" style={{ color: 'var(--text-secondary)' }}>Filtros activos:</Text>
                 {getFilterLabel().map((label, idx) => (
                     <Badge
                         key={idx}

@@ -1,4 +1,4 @@
-import { SimpleGrid, Card, Image, Text, Badge, Group, Button, Overlay, ThemeIcon, Title } from '@mantine/core'
+import { SimpleGrid, Card, Image, Text, Badge, Group, Button, Overlay, Title } from '@mantine/core'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { ArrowRight, Star } from 'lucide-react'
@@ -6,14 +6,13 @@ import { ArrowRight, Star } from 'lucide-react'
 const CategoryGrid = ({ categories, title, subtitle }) => {
     if (categories.length === 0) return null
 
-    //layout general de cada card para mostrar las diversas categorias
     return (
         <>
             {title && (
                 <Group justify="space-between" mb="lg" mt="xl">
                     <div>
-                        <Title order={2} c="#333">{title}</Title>
-                        {subtitle && <Text c="dimmed">{subtitle}</Text>}
+                        <Title order={2} style={{ color: 'var(--text-h)' }}>{title}</Title>
+                        {subtitle && <Text style={{ color: 'var(--text-secondary)' }}>{subtitle}</Text>}
                     </div>
                 </Group>
             )}
@@ -39,6 +38,8 @@ const CategoryGrid = ({ categories, title, subtitle }) => {
                                 textDecoration: 'none',
                                 overflow: 'hidden',
                                 transition: 'all 0.3s',
+                                background: 'var(--card-bg)',
+                                borderColor: 'var(--border)'
                             }}
                         >
                             <div style={{ position: 'relative', height: 200 }}>
@@ -73,8 +74,8 @@ const CategoryGrid = ({ categories, title, subtitle }) => {
                             <Group justify="space-between" p="md">
                                 <Group gap={4}>
                                     <Star size={14} color="#e67e22" />
-                                    <Text size="sm" c="dimmed">4.8</Text>
-                                    <Text size="xs" c="dimmed">• {category.popularRecipes[0]}</Text>
+                                    <Text size="sm" style={{ color: 'var(--text-secondary)' }}>4.8</Text>
+                                    <Text size="xs" style={{ color: 'var(--text-secondary)' }}>• {category.popularRecipes[0]}</Text>
                                 </Group>
                                 <Button variant="subtle" size="xs" color="orange" rightSection={<ArrowRight size={12} />}>
                                     Ver más

@@ -1,31 +1,32 @@
-import { Modal, Box, Group, Text, Title, Button, ActionIcon, Badge, Paper } from '@mantine/core'
-import { X, Clock, Zap, Star, Heart, Play, Pause, Maximize2, Volume2, Share2 } from 'lucide-react'
-import { useState, useRef } from 'react'
+import { Modal, Box, Group, Text, Title, Button, ActionIcon, Badge } from '@mantine/core'
+import { X, Clock, Zap, Star, Heart, Share2 } from 'lucide-react'
+import { useTheme } from '../context/ThemeContext'
 
 const VideoModal = ({ opened, onClose, videoType = 'promo' }) => {
-    const [isPlaying, setIsPlaying] = useState(false)
-    const videoRef = useRef(null)
+    const { isDarkMode } = useTheme()
 
-    // Diferentes contenidos según el tipo de video
+    const gradientStart = isDarkMode ? '#f5a623' : '#e67e22'
+    const gradientEnd = isDarkMode ? '#f7b53e' : '#f39c12'
+
     const videoContent = {
         promo: {
             title: 'Descubre Chester Recetas',
             description: 'La mejor plataforma de recetas para toda la familia',
-            videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // never
+            videoUrl: 'https://www.youtube.com/embed/K9RLIYYpEfo',
             duration: '1:30',
             difficulty: 'Fácil',
         },
         recipe: {
             title: 'Pasta al Pesto - Paso a Paso',
             description: 'Aprende a preparar esta deliciosa receta italiana',
-            videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // gonna
+            videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
             duration: '5:20',
             difficulty: 'Media',
         },
         tutorial: {
             title: 'Cómo usar Chester Recetas',
             description: 'Guía rápida para aprovechar al máximo la plataforma',
-            videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // give you up
+            videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
             duration: '2:45',
             difficulty: 'Fácil',
         },
@@ -38,27 +39,55 @@ const VideoModal = ({ opened, onClose, videoType = 'promo' }) => {
             opened={opened}
             onClose={onClose}
             size="xl"
-            padding={0}
             withCloseButton={false}
             radius="lg"
+            centered
             styles={{
-                body: { padding: 0 },
-                content: { overflow: 'hidden' }
+                content: {
+                    background: 'var(--modal-bg)',
+                    borderRadius: '24px',
+                    overflow: 'hidden',
+                },
+                body: {
+                    padding: 0,
+                },
+                header: {
+                    display: 'none',
+                },
             }}
         >
             {/* Header */}
-            <Group justify="space-between" p="md" style={{ borderBottom: '1px solid #eee' }}>
-                <div>
-                    <Title order={3}>{currentVideo.title}</Title>
-                    <Text size="sm" c="dimmed">{currentVideo.description}</Text>
-                </div>
-                <ActionIcon onClick={onClose} size="lg" radius="xl" variant="light">
-                    <X size={20} />
+            <div style={{
+                background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
+                padding: '20px 24px',
+                position: 'relative',
+            }}>
+                <ActionIcon
+                    onClick={onClose}
+                    style={{
+                        position: 'absolute',
+                        top: 16,
+                        right: 16,
+                        background: 'rgba(255,255,255,0.2)',
+                        borderRadius: '50%',
+                    }}
+                >
+                    <X size={18} color="white" />
                 </ActionIcon>
-            </Group>
 
-            {/* Video Player */}
-            <Box style={{ position: 'relative', backgroundColor: '#000', aspectRatio: '16/9' }}>
+                <Title order={3} style={{ color: 'white', marginBottom: 4, paddingRight: 30 }}>
+                    {currentVideo.title}
+                </Title>
+                <Text size="sm" style={{ color: 'rgba(255,255,255,0.9)' }}>
+                    {currentVideo.description}
+                </Text>
+            </div>
+
+            {/* Video */}
+            <div style={{
+                backgroundColor: '#000',
+                aspectRatio: '16/9',
+            }}>
                 <iframe
                     src={currentVideo.videoUrl}
                     style={{
@@ -66,36 +95,75 @@ const VideoModal = ({ opened, onClose, videoType = 'promo' }) => {
                         height: '100%',
                         border: 'none',
                     }}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                     title={currentVideo.title}
                 />
-            </Box>
+            </div>
 
-            {/* Info del video */}
-            <Paper p="md" radius={0} style={{ borderTop: '1px solid #eee' }}>
-                <Group justify="space-between" wrap="wrap">
-                    <Group gap="md">
-                        <Badge color="orange" variant="light" leftSection={<Clock size={12} />}>
+            {/* Info y acciones */}
+            <div style={{ padding: '20px 24px' }}>
+                <Group justify="space-between" wrap="wrap" mb="md">
+                    <Group gap="sm">
+                        <Badge
+                            variant="light"
+                            style={{
+                                background: 'var(--accent-bg)',
+                                color: 'var(--accent)',
+                            }}
+                            leftSection={<Clock size={12} />}
+                        >
                             {currentVideo.duration}
                         </Badge>
-                        <Badge color="orange" variant="light" leftSection={<Zap size={12} />}>
+                        <Badge
+                            variant="light"
+                            style={{
+                                background: 'var(--accent-bg)',
+                                color: 'var(--accent)',
+                            }}
+                            leftSection={<Zap size={12} />}
+                        >
                             {currentVideo.difficulty}
                         </Badge>
-                        <Badge color="orange" variant="light" leftSection={<Star size={12} />}>
-                            Receta destacada
+                        <Badge
+                            variant="light"
+                            style={{
+                                background: 'var(--accent-bg)',
+                                color: 'var(--accent)',
+                            }}
+                            leftSection={<Star size={12} />}
+                        >
+                            Destacado
                         </Badge>
                     </Group>
-                    <Group gap="sm">
-                        <Button variant="subtle" leftSection={<Heart size={16} />} size="sm">
-                            Guardar
-                        </Button>
-                        <Button variant="subtle" leftSection={<Share2 size={16} />} size="sm">
-                            Compartir
-                        </Button>
-                    </Group>
                 </Group>
-            </Paper>
+
+                <Group justify="flex-end" gap="sm">
+                    <Button
+                        variant="light"
+                        leftSection={<Heart size={16} />}
+                        size="sm"
+                        radius="xl"
+                        style={{
+                            backgroundColor: 'var(--accent-bg)',
+                            color: 'var(--accent)',
+                        }}
+                    >
+                        Guardar
+                    </Button>
+                    <Button
+                        variant="light"
+                        leftSection={<Share2 size={16} />}
+                        size="sm"
+                        radius="xl"
+                        style={{
+                            backgroundColor: 'var(--accent-bg)',
+                            color: 'var(--accent)',
+                        }}
+                    >
+                        Compartir
+                    </Button>
+                </Group>
+            </div>
         </Modal>
     )
 }
