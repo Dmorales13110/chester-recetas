@@ -14,7 +14,8 @@ import {
     Drawer,
     Stack,
     ActionIcon,
-    Tooltip
+    Tooltip,
+    Switch
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import {
@@ -216,7 +217,32 @@ function Navbar() {
                                 </Indicator>
                             </Tooltip>
 
-                            {/* Menú de usuario - Estilos corregidos */}
+                            <Tooltip label={isDarkMode ? "Modo claro" : "Modo oscuro"} position="bottom">
+                                <ActionIcon
+                                    variant="subtle"
+                                    size="lg"
+                                    onClick={toggleTheme}
+                                    radius="xl"
+                                    style={{ 
+                                        color: colors.iconColor, 
+                                        transition: 'all 0.2s',
+                                        background: 'transparent',
+                                    }}
+                                    styles={{
+                                        root: {
+                                            '&:hover': {
+                                                backgroundColor: colors.iconHoverBg,
+                                                color: colors.textHover,
+                                                transform: 'translateY(-2px)',
+                                            }
+                                        }
+                                    }}
+                                >
+                                    {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+                                </ActionIcon>
+                            </Tooltip>
+
+                            {/* Menú de usuario */}
                             <Menu shadow="md" width={220} position="bottom-end" offset={5}>
                                 <Menu.Target>
                                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -298,6 +324,25 @@ function Navbar() {
                                         }}
                                     >
                                         {isDarkMode ? 'Modo claro' : 'Modo oscuro'}
+                                    </Menu.Item>
+                                    <Divider style={{ borderColor: colors.dropdownBorder }} />
+                                    <Menu.Item
+                                        leftSection={<Settings size={14} />}
+                                        onClick={openSettings}
+                                        style={{
+                                            color: colors.text,
+                                            transition: 'all 0.2s',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.backgroundColor = colors.menuHoverBg
+                                            e.currentTarget.style.color = colors.menuHoverColor
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.backgroundColor = 'transparent'
+                                            e.currentTarget.style.color = colors.text
+                                        }}
+                                    >
+                                        Configuración
                                     </Menu.Item>
                                     <Divider style={{ borderColor: colors.dropdownBorder }} />
                                     <Menu.Item
@@ -494,6 +539,25 @@ function Navbar() {
                         }}
                     >
                         {isDarkMode ? 'Modo claro' : 'Modo oscuro'}
+                    </Button>
+
+                    <Button
+                        variant="subtle"
+                        leftSection={<Settings size={18} />}
+                        justify="flex-start"
+                        fullWidth
+                        onClick={openSettings}
+                        style={{ color: colors.text }}
+                        styles={{
+                            root: {
+                                '&:hover': {
+                                    backgroundColor: colors.iconHoverBg,
+                                    color: colors.textHover,
+                                }
+                            }
+                        }}
+                    >
+                        Configuración
                     </Button>
 
                     <Divider style={{ borderColor: colors.navBorder }} />

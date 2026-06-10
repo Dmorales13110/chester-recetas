@@ -1,7 +1,12 @@
-import { Group, Text, ActionIcon, Container, Divider } from '@mantine/core'
-import { Mail, Heart, MapPin, Phone, Share2, Camera, MessageCircle, Video, Sparkles, DogIcon } from 'lucide-react'
+import { Group, Text, ActionIcon, Container, Divider, Stack } from '@mantine/core'
+import { Mail, Heart, MapPin, Phone, Share2, Camera, MessageCircle, Video, Sparkles, DogIcon, Home, ArrowUp } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 export default function Footer() {
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
     return (
         <div style={{
             background: 'var(--bg)',
@@ -11,13 +16,31 @@ export default function Footer() {
         }}>
             <Container size="xl" py="lg">
                 <Group justify="space-between" wrap="wrap" gap="md" mb="md">
-                    <Group gap="xs">
+                    <Group
+                        gap="xs"
+                        component={Link}
+                        to="/"
+                        onClick={scrollToTop}
+                        style={{ cursor: 'pointer', textDecoration: 'none' }}
+                    >
                         <div style={{ background: 'linear-gradient(135deg, #e67e22, #f39c12)', padding: 6, borderRadius: 10 }}>
                             <DogIcon size={18} color="white" />
                         </div>
                         <Text fw={700} size="md" style={{ color: 'var(--text-h)' }}>Chester Recetas</Text>
                     </Group>
+
                     <Group gap="sm">
+                        {/* Botón para volver arriba */}
+                        <ActionIcon
+                            variant="subtle"
+                            size="md"
+                            onClick={scrollToTop}
+                            radius="xl"
+                            style={{ background: 'var(--social-bg)', color: '#f39c12' }}
+                            title="Volver arriba"
+                        >
+                            <ArrowUp size={16} />
+                        </ActionIcon>
                         <ActionIcon variant="subtle" size="md" component="a" href="#" target="_blank" radius="xl" style={{ background: 'var(--social-bg)', color: '#f39c12' }}>
                             <Share2 size={16} />
                         </ActionIcon>
