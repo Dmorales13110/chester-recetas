@@ -34,7 +34,24 @@ const NewsletterSection = ({ email, setEmail, onSubscribe }) => {
                                 backgroundColor: 'white',
                             }}
                         />
-                        <Button color="dark" radius="xl" size="lg" leftSection={<ArrowRight size={18} />} onClick={onSubscribe}>
+                        <Button
+                            variant="white"
+                            radius="xl"
+                            size="lg"
+                            leftSection={<ArrowRight size={18} />}
+                            onClick={onSubscribe}
+                            styles={{
+                                root: {
+                                    color: '#e67e22',
+                                    fontWeight: 600,
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                                    }
+                                }
+                            }}
+                        >
                             Suscribirme
                         </Button>
                     </Group>

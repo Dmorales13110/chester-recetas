@@ -30,17 +30,20 @@ import {
     Mail,
     LogOut,
     Sun,
-    Moon
+    Moon,
+    Info
 } from 'lucide-react'
 import { useFavorites } from '../context/FavoritesContext'
 import { useTheme } from '../context/ThemeContext'
 import SettingsModal from './SettingsModal'
 import { motion } from 'framer-motion'
+import { useAuth } from '../context/AuthContext'
 
 const navLinks = [
     { path: '/', label: 'Inicio', icon: <Home size={18} /> },
     { path: '/recetas', label: 'Recetas', icon: <BookOpen size={18} /> },
     { path: '/categorias', label: 'Categorías', icon: <FolderTree size={18} /> },
+    { path: '/sobre-nosotros', label: 'Sobre Nosotros', icon: <Info size={18} /> },
     { path: '/contacto', label: 'Contacto', icon: <Mail size={18} /> },
 ]
 
@@ -50,9 +53,11 @@ function Navbar() {
     const { favorites } = useFavorites()
     const { isDarkMode, toggleTheme } = useTheme()
     const navigate = useNavigate()
+    const { logout } = useAuth()
 
     const handleLogout = () => {
-        navigate('/')
+        logout()
+        navigate('/', { replace: true })
     }
 
     // Colores según el tema
@@ -223,8 +228,8 @@ function Navbar() {
                                     size="lg"
                                     onClick={toggleTheme}
                                     radius="xl"
-                                    style={{ 
-                                        color: colors.iconColor, 
+                                    style={{
+                                        color: colors.iconColor,
                                         transition: 'all 0.2s',
                                         background: 'transparent',
                                     }}

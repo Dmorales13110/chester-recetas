@@ -63,6 +63,10 @@ export default function Footer() {
 
                 <Group justify="space-between" wrap="wrap" gap="md">
                     <Group gap="xl" wrap="wrap">
+                        <Group gap="xs" component={Link} to="/sobre-nosotros" style={{ cursor: 'pointer', textDecoration: 'none' }}>
+                            <DogIcon size={14} style={{ color: '#f39c12' }} />
+                            <Text size="xs" style={{ color: 'var(--text-secondary)' }}>Sobre nosotros</Text>
+                        </Group>
                         <Group gap="xs">
                             <MapPin size={14} style={{ color: '#f39c12' }} />
                             <Text size="xs" style={{ color: 'var(--text-secondary)' }}>Calle Joven Cocina con Av chesterjaus, Venezuela</Text>

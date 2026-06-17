@@ -482,3 +482,87 @@ a:hover svg {
     border-radius: 20px !important;
   }
 }
+
+/* ============================================
+   BADGES DEL LOGIN - FORZAR LETRAS BLANCAS
+   ============================================ */
+
+.login-badge,
+.login-badge *,
+.login-badge .mantine-Badge-label,
+.login-badge .mantine-Badge-inner {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.login-badge.mantine-Badge-root {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* En modo oscuro también se mantienen blancos */
+.dark-mode .login-badge,
+.dark-mode .login-badge *,
+.dark-mode .login-badge .mantine-Badge-label,
+.dark-mode .login-badge .mantine-Badge-inner {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.dark-mode .login-badge.mantine-Badge-root {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+/* ============================================
+   TABS DEL LOGIN - CORREGIR COLORES
+   ============================================ */
+
+/* Tabs en modo claro */
+:root .mantine-Tabs-tab {
+  color: var(--text) !important;
+  background: transparent !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+:root .mantine-Tabs-tab[data-active="true"] {
+  color: #e67e22 !important;
+  font-weight: 600 !important;
+  border-bottom: 2px solid #e67e22 !important;
+  background: transparent !important;
+}
+
+:root .mantine-Tabs-tab:hover:not([data-active="true"]) {
+  background: var(--accent-bg) !important;
+  color: var(--accent) !important;
+}
+
+:root .mantine-Tabs-tab:hover[data-active="true"] {
+  background: transparent !important;
+  color: #e67e22 !important;
+}
+
+/* Tabs en modo oscuro */
+.dark-mode .mantine-Tabs-tab {
+  color: var(--text) !important;
+  background: transparent !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease !important;
+}
+
+.dark-mode .mantine-Tabs-tab[data-active="true"] {
+  color: #f5a623 !important;
+  font-weight: 600 !important;
+  border-bottom: 2px solid #f5a623 !important;
+  background: transparent !important;
+}
+
+.dark-mode .mantine-Tabs-tab:hover:not([data-active="true"]) {
+  background: var(--accent-bg) !important;
+  color: var(--accent) !important;
+}
+
+.dark-mode .mantine-Tabs-tab:hover[data-active="true"] {
+  background: transparent !important;
+  color: #f5a623 !important;
+}

@@ -91,8 +91,43 @@ const FeaturedRecipes = ({ recipes, title = "Favoritos de Chester" }) => {
                                     <Button component={Link} to={`/receta/${recipe.id}`} variant="light" color="orange" radius="xl" size="sm">
                                         Ver receta
                                     </Button>
-                                    <ActionIcon variant="light" color="teal" size={36} radius="xl" onClick={() => toggleSaved(recipe.id)}>
-                                        <Bookmark size={16} fill={saved[recipe.id] ? 'teal' : 'none'} />
+                                    <ActionIcon
+                                        variant={saved[recipe.id] ? "filled" : "light"}
+                                        color={saved[recipe.id] ? "teal" : "gray"}
+                                        size={36}
+                                        radius="xl"
+                                        onClick={() => toggleSaved(recipe.id)}
+                                        style={{
+                                            backgroundColor: saved[recipe.id]
+                                                ? '#14b8a6'
+                                                : 'var(--accent-bg)',
+                                            color: saved[recipe.id]
+                                                ? 'white'
+                                                : 'var(--text-secondary)',
+                                            border: saved[recipe.id]
+                                                ? 'none'
+                                                : '1px solid var(--border)',
+                                            transition: 'all 0.2s ease',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (!saved[recipe.id]) {
+                                                e.currentTarget.style.backgroundColor = 'var(--accent-bg)'
+                                                e.currentTarget.style.color = 'var(--accent)'
+                                                e.currentTarget.style.borderColor = 'var(--accent)'
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (!saved[recipe.id]) {
+                                                e.currentTarget.style.backgroundColor = 'var(--accent-bg)'
+                                                e.currentTarget.style.color = 'var(--text-secondary)'
+                                                e.currentTarget.style.borderColor = 'var(--border)'
+                                            }
+                                        }}
+                                    >
+                                        <Bookmark
+                                            size={16}
+                                            fill={saved[recipe.id] ? 'white' : 'none'}
+                                        />
                                     </ActionIcon>
                                 </Group>
                             </Card>

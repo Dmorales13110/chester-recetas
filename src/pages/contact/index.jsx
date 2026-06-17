@@ -24,18 +24,6 @@ function ContactPage() {
                     <ContactForm />
                     <ShareRecipeForm />
                 </SimpleGrid>
-
-                {/* Sección de FAQ */}
-                <FaqSection
-                    faqs={faqs}
-                    activeFaqId={activeFaqId}
-                    toggleFaq={toggleFaq}
-                    searchFaq={searchFaq}
-                    setSearchFaq={setSearchFaq}
-                    selectedCategory={selectedCategory}
-                    setSelectedCategory={setSelectedCategory}
-                    faqCategories={faqCategories}
-                />
             </Stack>
         </Box>
     )
