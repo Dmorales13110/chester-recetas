@@ -53,11 +53,12 @@ function Navbar() {
     const { favorites } = useFavorites()
     const { isDarkMode, toggleTheme } = useTheme()
     const navigate = useNavigate()
-    const { logout } = useAuth()
+    const { user, logout } = useAuth()
 
     const handleLogout = () => {
         logout()
-        navigate('/', { replace: true })
+        navigate('/login', { replace: true })
+        close()
     }
 
     // Colores según el tema
@@ -261,7 +262,7 @@ function Navbar() {
                                                 transition: 'all 0.2s',
                                             }}
                                         >
-                                            <User size={18} />
+                                            {user?.name?.charAt(0) || <User size={18} />}
                                         </Avatar>
                                     </motion.div>
                                 </Menu.Target>
@@ -270,6 +271,10 @@ function Navbar() {
                                     borderColor: colors.dropdownBorder,
                                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                                 }}>
+                                    <Menu.Label style={{ color: colors.text }}>
+                                        {user?.name || 'Usuario'}
+                                    </Menu.Label>
+                                    <Menu.Divider style={{ borderColor: colors.dropdownBorder }} />
                                     <Menu.Item
                                         leftSection={<User size={14} />}
                                         onClick={() => navigate('/perfil')}
@@ -311,7 +316,6 @@ function Navbar() {
                                             </Text>
                                         )}
                                     </Menu.Item>
-                                    <Divider style={{ borderColor: colors.dropdownBorder }} />
                                     <Menu.Item
                                         leftSection={isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
                                         onClick={toggleTheme}
@@ -330,7 +334,6 @@ function Navbar() {
                                     >
                                         {isDarkMode ? 'Modo claro' : 'Modo oscuro'}
                                     </Menu.Item>
-                                    <Divider style={{ borderColor: colors.dropdownBorder }} />
                                     <Menu.Item
                                         leftSection={<Settings size={14} />}
                                         onClick={openSettings}
@@ -414,14 +417,14 @@ function Navbar() {
                             borderRadius: 12
                         }}>
                             <Avatar size="lg" radius="xl" style={{ background: colors.avatarBg, color: colors.avatarColor }}>
-                                <User size={24} />
+                                {user?.name?.charAt(0) || <User size={24} />}
                             </Avatar>
                             <div>
                                 <Text fw={600} style={{ color: isDarkMode ? '#f1f5f9' : '#1a1a2e' }}>
-                                    Usuario Demo
+                                    {user?.name || 'Usuario Demo'}
                                 </Text>
                                 <Text size="xs" style={{ color: isDarkMode ? '#94a3b8' : '#64748b' }}>
-                                    usuario@chester.com
+                                    {user?.email || 'usuario@chester.com'}
                                 </Text>
                             </div>
                         </Group>
