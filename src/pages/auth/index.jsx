@@ -4,7 +4,7 @@ import {
     Card, ThemeIcon, Box, LoadingOverlay, Alert, Divider,
     Badge, SimpleGrid, Tooltip, Tabs, ActionIcon, Button
 } from '@mantine/core'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
 import {
@@ -227,7 +227,7 @@ export default function LoginPage() {
                                 overflow: 'hidden',
                             }}
                         >
-                            {/* Botón de tema - Versión mejorada y visible */}
+                            {/* Botón de tema */}
                             <ActionIcon
                                 onClick={toggleTheme}
                                 variant="light"
@@ -262,7 +262,23 @@ export default function LoginPage() {
 
                             <Group justify="space-between" align="flex-start">
                                 <Stack gap="xs" style={{ flex: 1 }}>
-                                    <Group gap="xs">
+                                    {/* Logo clickeable - vuelve al home */}
+                                    <Group 
+                                        gap="xs" 
+                                        component={Link} 
+                                        to="/" 
+                                        style={{ 
+                                            textDecoration: 'none', 
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s',
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            e.currentTarget.style.opacity = '0.8'
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.currentTarget.style.opacity = '1'
+                                        }}
+                                    >
                                         <motion.div
                                             animate={{ rotate: [0, -10, 10, 0] }}
                                             transition={{ duration: 1, repeat: Infinity }}
@@ -372,7 +388,6 @@ export default function LoginPage() {
                         </Paper>
                     </motion.div>
 
-                    {/* Grid Principal */}
                     <Grid gutter="xl">
                         {/* Columna Izquierda - Formulario */}
                         <Grid.Col span={{ base: 12, lg: 6 }}>
