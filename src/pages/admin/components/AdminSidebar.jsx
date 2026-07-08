@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import {
     Stack,
     ThemeIcon,
@@ -11,6 +11,7 @@ import {
     UnstyledButton,
     Group,
     Paper,
+    Badge,
 } from '@mantine/core'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -27,9 +28,15 @@ import {
     PlusCircle,
     DogIcon,
     ChevronRight,
+    CheckCircle,
+    AlertCircle,
+    FileText,
+    Image,
+    Star,
 } from 'lucide-react'
 import { useAuth } from '../../../context/AuthContext'
 
+// Definición de módulos con sus submenús
 const navItems = [
     {
         label: 'Dashboard',
@@ -65,9 +72,9 @@ const navItems = [
         hasSubmenu: false,
     },
     {
-        label: 'Calendario',
-        icon: Calendar,
-        href: '/admin/calendar',
+        label: 'Categorías',
+        icon: Tags,
+        href: '/admin/categories',
         hasSubmenu: false,
     },
     {
@@ -80,6 +87,12 @@ const navItems = [
         label: 'Notificaciones',
         icon: Bell,
         href: '/admin/notifications',
+        hasSubmenu: false,
+    },
+    {
+        label: 'Configuración',
+        icon: Settings,
+        href: '/admin/settings',
         hasSubmenu: false,
     },
 ]
@@ -174,7 +187,6 @@ const FloatingSubmenu = ({
                             <Stack gap={4} p="xs">
                                 {item.subItems?.map((subItem) => {
                                     const isActive = activePath === subItem.href
-                                    const Icon = subItem.icon
                                     return (
                                         <UnstyledButton
                                             key={subItem.href}
@@ -212,11 +224,16 @@ const FloatingSubmenu = ({
                                                     borderRadius: 6,
                                                 }}
                                             >
-                                                <Icon size={14} />
+                                                <subItem.icon size={14} />
                                             </ThemeIcon>
                                             <Text size="xs" fw={500}>
                                                 {subItem.label}
                                             </Text>
+                                            {isActive && (
+                                                <Badge size="xs" color="orange" variant="light" ml="auto">
+                                                    Activo
+                                                </Badge>
+                                            )}
                                         </UnstyledButton>
                                     )
                                 })}
@@ -278,6 +295,16 @@ const MenuItem = ({ item, isActive, onClick }) => {
                     >
                         <Icon size={20} />
                     </ThemeIcon>
+                    {isActive && (
+                        <div style={{
+                            position: 'absolute',
+                            right: 8,
+                            width: 6,
+                            height: 6,
+                            borderRadius: '50%',
+                            background: 'var(--accent)',
+                        }} />
+                    )}
                 </UnstyledButton>
             </Tooltip>
         </div>

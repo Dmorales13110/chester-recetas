@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react'
 import {
     Container, Paper, Title, Text, Group, Stack, Grid,
     Card, ThemeIcon, Box, LoadingOverlay, Alert, Divider,
-    Badge, SimpleGrid, Tooltip, Tabs
+    Badge, SimpleGrid, Tooltip, Tabs, ActionIcon, Button
 } from '@mantine/core'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useTheme } from '../../context/ThemeContext'
 import {
     Lock, User, Key, Sparkles, ChefHat, Heart, Coffee,
     Utensils, Star, Shield, BookOpen, Users, Award,
     ArrowRight, CheckCircle, Eye, EyeOff, Zap, DogIcon,
+    Info, Sun, Moon
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import AnimatedDog from './components/AnimatedDog'
@@ -34,18 +36,20 @@ export default function LoginPage() {
     const [newPassword, setNewPassword] = useState('')
     const [confirmNewPassword, setConfirmNewPassword] = useState('')
 
-    const { login, user, isAdmin } = useAuth()
+    const { login, register, isAuthenticated, user, isAdmin } = useAuth()
+    const { isDarkMode, toggleTheme } = useTheme()
     const navigate = useNavigate()
 
+    // Redirigir si ya está autenticado
     useEffect(() => {
-        if (user) {
+        if (isAuthenticated && user) {
             if (isAdmin) {
                 navigate('/admin', { replace: true })
             } else {
                 navigate('/', { replace: true })
             }
         }
-    }, [user, isAdmin, navigate])
+    }, [isAuthenticated, user, isAdmin, navigate])
 
     const handleLogin = async (e) => {
         e.preventDefault()
@@ -81,12 +85,19 @@ export default function LoginPage() {
         setLoading(true)
 
         setTimeout(() => {
-            setSuccess('🎉 ¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.')
-            setLoading(false)
-            setTimeout(() => {
-                setActiveTab('login')
-                setSuccess('')
-            }, 2500)
+            const result = register(name, email, password)
+            if (result.success) {
+                setSuccess(result.message || '🎉 ¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.')
+                setLoading(false)
+                setTimeout(() => {
+                    setActiveTab('login')
+                    setEmail(email)
+                    setSuccess('')
+                }, 2500)
+            } else {
+                setError(result.error)
+                setLoading(false)
+            }
         }, 1500)
     }
 
@@ -137,6 +148,13 @@ export default function LoginPage() {
         { label: 'Usuarios', value: '+10k', icon: <Users size={18} /> },
         { label: 'Chefs', value: '+50', icon: <ChefHat size={18} /> },
         { label: 'Favoritos', value: '+2k', icon: <Heart size={18} /> },
+    ]
+
+    // Credenciales de prueba
+    const demoCredentials = [
+        { role: 'Administrador', email: 'admin@chester.com', password: 'admin123', icon: '👑' },
+        { role: 'Usuario', email: 'usuario@chester.com', password: 'user123', icon: '👤' },
+        { role: 'Chef', email: 'chef@chester.com', password: 'chef123', icon: '👨‍🍳' },
     ]
 
     return (
@@ -193,7 +211,7 @@ export default function LoginPage() {
 
             <Container size="xl" py="xl">
                 <Stack gap="xl">
-                    {/* Header */}
+                    {/* Header con botón de tema visible */}
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -209,6 +227,39 @@ export default function LoginPage() {
                                 overflow: 'hidden',
                             }}
                         >
+                            {/* Botón de tema - Versión mejorada y visible */}
+                            <ActionIcon
+                                onClick={toggleTheme}
+                                variant="light"
+                                size="lg"
+                                radius="xl"
+                                style={{
+                                    position: 'absolute',
+                                    top: 16,
+                                    right: 16,
+                                    background: 'rgba(255,255,255,0.95)',
+                                    color: isDarkMode ? '#1a1a2e' : '#e67e22',
+                                    borderRadius: '50%',
+                                    padding: 10,
+                                    transition: 'all 0.3s ease',
+                                    zIndex: 10,
+                                    border: '2px solid rgba(255,255,255,0.2)',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'scale(1.1) rotate(15deg)'
+                                    e.currentTarget.style.boxShadow = '0 6px 30px rgba(0,0,0,0.25)'
+                                    e.currentTarget.style.background = '#ffffff'
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'scale(1) rotate(0deg)'
+                                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.15)'
+                                    e.currentTarget.style.background = 'rgba(255,255,255,0.95)'
+                                }}
+                            >
+                                {isDarkMode ? <Sun size={22} /> : <Moon size={22} />}
+                            </ActionIcon>
+
                             <Group justify="space-between" align="flex-start">
                                 <Stack gap="xs" style={{ flex: 1 }}>
                                     <Group gap="xs">

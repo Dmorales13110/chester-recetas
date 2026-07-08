@@ -1,7 +1,8 @@
 import { Container, Grid, SimpleGrid, Title, Text, Paper, Group, ThemeIcon, Box, Button, Card, Stack, Badge } from '@mantine/core'
-import {
-    Users, BookOpen, Heart, MessageCircle, TrendingUp,
-    Calendar, Eye, Clock, Sparkles, ArrowRight, Plus
+import { 
+    Users, BookOpen, Heart, MessageCircle, TrendingUp, 
+    Calendar, Eye, Clock, Sparkles, ArrowRight, Plus,
+    Settings, Tag, Bell, BarChart3, CheckCircle, AlertCircle
 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
 import { Navigate, Link } from 'react-router-dom'
@@ -15,7 +16,9 @@ const quickActions = [
     { label: 'Nueva receta', icon: <BookOpen size={18} />, path: '/admin/recipes/new', color: '#e67e22', bg: 'rgba(230, 126, 34, 0.1)' },
     { label: 'Ver usuarios', icon: <Users size={18} />, path: '/admin/users', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)' },
     { label: 'Gestionar comentarios', icon: <MessageCircle size={18} />, path: '/admin/comments', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)' },
-    { label: 'Estadísticas', icon: <TrendingUp size={18} />, path: '/admin/stats', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' },
+    { label: 'Categorías', icon: <Tag size={18} />, path: '/admin/categories', color: '#8b5cf6', bg: 'rgba(139, 92, 246, 0.1)' },
+    { label: 'Estadísticas', icon: <BarChart3 size={18} />, path: '/admin/stats', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)' },
+    { label: 'Configuración', icon: <Settings size={18} />, path: '/admin/settings', color: '#6b7280', bg: 'rgba(107, 114, 128, 0.1)' },
 ]
 
 export default function AdminPage() {
@@ -32,9 +35,9 @@ export default function AdminPage() {
                 transition={{ duration: 0.5 }}
             >
                 {/* Header */}
-                <Paper
-                    p="xl"
-                    radius="xl"
+                <Paper 
+                    p="xl" 
+                    radius="xl" 
                     style={{
                         background: 'linear-gradient(135deg, #e67e22, #f39c12)',
                         marginBottom: 24,
@@ -52,7 +55,7 @@ export default function AdminPage() {
                         background: 'rgba(255,255,255,0.1)',
                         pointerEvents: 'none',
                     }} />
-
+                    
                     <Group justify="space-between" align="center" style={{ position: 'relative', zIndex: 1 }}>
                         <Stack gap="xs">
                             <Group gap="xs">
@@ -62,9 +65,17 @@ export default function AdminPage() {
                             <Text c="white" opacity={0.9} size="sm">
                                 Bienvenido al panel administrativo de Chester Recetas
                             </Text>
+                            <Group gap="xs">
+                                <Badge size="sm" variant="white" style={{ background: 'rgba(255,255,255,0.2)', color: 'white' }}>
+                                    🐕 Administrador
+                                </Badge>
+                                <Badge size="sm" variant="white" style={{ background: 'rgba(255,255,255,0.2)', color: 'white' }}>
+                                    📊 Última actualización: Hoy
+                                </Badge>
+                            </Group>
                         </Stack>
-                        <Button
-                            variant="white"
+                        <Button 
+                            variant="white" 
                             radius="xl"
                             leftSection={<Plus size={16} />}
                             component={Link}
@@ -80,7 +91,7 @@ export default function AdminPage() {
                 <AdminStats />
 
                 {/* Acciones rápidas */}
-                <SimpleGrid cols={{ base: 2, md: 4 }} spacing="md" mb="xl">
+                <SimpleGrid cols={{ base: 2, md: 3, lg: 6 }} spacing="md" mb="xl">
                     {quickActions.map((action, idx) => (
                         <motion.div
                             key={idx}
@@ -118,10 +129,10 @@ export default function AdminPage() {
                                 }}
                             >
                                 <Group gap="sm">
-                                    <ThemeIcon
-                                        size="md"
-                                        radius="xl"
-                                        style={{
+                                    <ThemeIcon 
+                                        size="md" 
+                                        radius="xl" 
+                                        style={{ 
                                             background: action.bg,
                                             color: action.color,
                                             width: 36,
@@ -140,7 +151,7 @@ export default function AdminPage() {
                     ))}
                 </SimpleGrid>
 
-                {/* Grid principal con alturas iguales */}
+                {/* Grid principal */}
                 <Grid gutter="md">
                     <Grid.Col span={{ base: 12, lg: 8 }}>
                         <AdminRecipes />
