@@ -1,6 +1,6 @@
 import { Container, Grid, SimpleGrid, Title, Text, Paper, Group, ThemeIcon, Box, Button, Card, Stack, Badge } from '@mantine/core'
-import { 
-    Users, BookOpen, Heart, MessageCircle, TrendingUp, 
+import {
+    Users, BookOpen, Heart, MessageCircle, TrendingUp,
     Calendar, Eye, Clock, Sparkles, ArrowRight, Plus,
     Settings, Tag, Bell, BarChart3, CheckCircle, AlertCircle
 } from 'lucide-react'
@@ -35,9 +35,9 @@ export default function AdminPage() {
                 transition={{ duration: 0.5 }}
             >
                 {/* Header */}
-                <Paper 
-                    p="xl" 
-                    radius="xl" 
+                <Paper
+                    p="xl"
+                    radius="xl"
                     style={{
                         background: 'linear-gradient(135deg, #e67e22, #f39c12)',
                         marginBottom: 24,
@@ -55,7 +55,7 @@ export default function AdminPage() {
                         background: 'rgba(255,255,255,0.1)',
                         pointerEvents: 'none',
                     }} />
-                    
+
                     <Group justify="space-between" align="center" style={{ position: 'relative', zIndex: 1 }}>
                         <Stack gap="xs">
                             <Group gap="xs">
@@ -65,17 +65,9 @@ export default function AdminPage() {
                             <Text c="white" opacity={0.9} size="sm">
                                 Bienvenido al panel administrativo de Chester Recetas
                             </Text>
-                            <Group gap="xs">
-                                <Badge size="sm" variant="white" style={{ background: 'rgba(255,255,255,0.2)', color: 'white' }}>
-                                    🐕 Administrador
-                                </Badge>
-                                <Badge size="sm" variant="white" style={{ background: 'rgba(255,255,255,0.2)', color: 'white' }}>
-                                    📊 Última actualización: Hoy
-                                </Badge>
-                            </Group>
                         </Stack>
-                        <Button 
-                            variant="white" 
+                        <Button
+                            variant="white"
                             radius="xl"
                             leftSection={<Plus size={16} />}
                             component={Link}
@@ -90,8 +82,11 @@ export default function AdminPage() {
                 {/* Stats */}
                 <AdminStats />
 
-                {/* Acciones rápidas */}
-                <SimpleGrid cols={{ base: 2, md: 3, lg: 6 }} spacing="md" mb="xl">
+                <SimpleGrid
+                    cols={{ base: 2, md: 3, lg: 6 }}
+                    spacing="md"
+                    mb="xl"
+                >
                     {quickActions.map((action, idx) => (
                         <motion.div
                             key={idx}
@@ -105,7 +100,7 @@ export default function AdminPage() {
                                 component={Link}
                                 to={action.path}
                                 withBorder
-                                padding="md"
+                                padding="sm"
                                 radius="xl"
                                 style={{
                                     background: 'var(--card-bg)',
@@ -114,10 +109,11 @@ export default function AdminPage() {
                                     textDecoration: 'none',
                                     transition: 'all 0.3s ease',
                                     height: '100%',
+                                    minHeight: 60,
                                     display: 'flex',
                                     alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    minHeight: 60,
+                                    justifyContent: 'center',
+                                    gap: 8,
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.borderColor = action.color
@@ -128,24 +124,30 @@ export default function AdminPage() {
                                     e.currentTarget.style.boxShadow = 'none'
                                 }}
                             >
-                                <Group gap="sm">
-                                    <ThemeIcon 
-                                        size="md" 
-                                        radius="xl" 
-                                        style={{ 
-                                            background: action.bg,
-                                            color: action.color,
-                                            width: 36,
-                                            height: 36,
-                                        }}
-                                    >
-                                        {action.icon}
-                                    </ThemeIcon>
-                                    <Text fw={600} size="sm" style={{ color: 'var(--text-h)' }}>
-                                        {action.label}
-                                    </Text>
-                                </Group>
-                                <ArrowRight size={16} style={{ color: 'var(--text-secondary)' }} />
+                                <ThemeIcon
+                                    size="sm"
+                                    radius="xl"
+                                    style={{
+                                        background: action.bg,
+                                        color: action.color,
+                                        width: 28,
+                                        height: 28,
+                                        flexShrink: 0,
+                                    }}
+                                >
+                                    {action.icon}
+                                </ThemeIcon>
+                                <Text
+                                    fw={500}
+                                    size="xs"
+                                    style={{
+                                        color: 'var(--text-h)',
+                                        whiteSpace: 'nowrap',
+                                        fontSize: 12,
+                                    }}
+                                >
+                                    {action.label}
+                                </Text>
                             </Card>
                         </motion.div>
                     ))}
