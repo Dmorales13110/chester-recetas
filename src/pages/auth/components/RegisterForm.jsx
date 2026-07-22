@@ -1,5 +1,5 @@
 import { TextInput, PasswordInput, Button, Stack, Alert, Text, Group, Anchor, Checkbox, Tooltip } from '@mantine/core'
-import { User, Mail, Lock, CheckCircle, XCircle, Sparkles, ArrowRight, Eye, EyeOff } from 'lucide-react'
+import { User, Mail, Lock, CheckCircle, XCircle, Sparkles, ArrowRight, Eye, EyeOff, Phone, MapPin } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 
@@ -8,11 +8,20 @@ const RegisterForm = ({
     email, setEmail, 
     password, setPassword, 
     confirmPassword, setConfirmPassword,
+    telefono, setTelefono,
+    ubicacion, setUbicacion,
     error, success, loading, onSubmit, onBackToLogin 
 }) => {
     const [acceptedTerms, setAcceptedTerms] = useState(false)
     const [showPasswordTooltip, setShowPasswordTooltip] = useState(false)
     const [showConfirmTooltip, setShowConfirmTooltip] = useState(false)
+
+    // Validación en tiempo real para el botón
+    const isFormValid = acceptedTerms && 
+        name && name.trim().length >= 2 &&
+        email && email.includes('@') &&
+        password && password.length >= 6 &&
+        confirmPassword && password === confirmPassword
 
     return (
         <motion.form
@@ -25,7 +34,7 @@ const RegisterForm = ({
             <Stack gap="md">
                 <TextInput
                     label="Nombre completo"
-                    placeholder="Tu nombre"
+                    placeholder="Tu nombre completo"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     leftSection={<User size={16} />}
@@ -57,6 +66,56 @@ const RegisterForm = ({
                     leftSection={<Mail size={16} />}
                     radius="md"
                     required
+                    styles={{
+                        input: {
+                            backgroundColor: 'var(--input-bg)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--input-text)',
+                            height: 48,
+                            '&:focus': {
+                                borderColor: '#e67e22',
+                            }
+                        },
+                        label: {
+                            color: 'var(--text-h)',
+                            fontWeight: 600,
+                            marginBottom: 6,
+                        }
+                    }}
+                />
+
+                <TextInput
+                    label="Teléfono"
+                    placeholder="+58 123 456 7890"
+                    value={telefono}
+                    onChange={(e) => setTelefono(e.target.value)}
+                    leftSection={<Phone size={16} />}
+                    radius="md"
+                    styles={{
+                        input: {
+                            backgroundColor: 'var(--input-bg)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--input-text)',
+                            height: 48,
+                            '&:focus': {
+                                borderColor: '#e67e22',
+                            }
+                        },
+                        label: {
+                            color: 'var(--text-h)',
+                            fontWeight: 600,
+                            marginBottom: 6,
+                        }
+                    }}
+                />
+
+                <TextInput
+                    label="Ubicación"
+                    placeholder="Ciudad, País"
+                    value={ubicacion}
+                    onChange={(e) => setUbicacion(e.target.value)}
+                    leftSection={<MapPin size={16} />}
+                    radius="md"
                     styles={{
                         input: {
                             backgroundColor: 'var(--input-bg)',
@@ -232,7 +291,7 @@ const RegisterForm = ({
                         size="lg"
                         radius="xl"
                         loading={loading}
-                        disabled={!acceptedTerms || !name || !email || !password || !confirmPassword || loading}
+                        disabled={!isFormValid}
                         rightSection={<ArrowRight size={18} />}
                         style={{ 
                             background: 'linear-gradient(135deg, #10b981, #34d399)',
@@ -256,7 +315,10 @@ const RegisterForm = ({
 
                 <Text size="xs" style={{ color: 'var(--text-secondary)' }} ta="center">
                     <Sparkles size={12} style={{ display: 'inline', marginRight: 4, color: '#10b981' }} />
-                    ¿Ya tienes cuenta? <Anchor size="xs" style={{ color: '#e67e22', cursor: 'pointer' }} onClick={onBackToLogin}>Inicia sesión</Anchor>
+                    ¿Ya tienes cuenta? 
+                    <Anchor size="xs" style={{ color: '#e67e22', cursor: 'pointer', marginLeft: 4 }} onClick={onBackToLogin}>
+                        Inicia sesión
+                    </Anchor>
                 </Text>
             </Stack>
         </motion.form>

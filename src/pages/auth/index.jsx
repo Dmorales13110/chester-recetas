@@ -27,6 +27,8 @@ export default function LoginPage() {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [name, setName] = useState('')
+    const [telefono, setTelefono] = useState('')
+    const [ubicacion, setUbicacion] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
     const [loading, setLoading] = useState(false)
@@ -36,7 +38,7 @@ export default function LoginPage() {
     const [newPassword, setNewPassword] = useState('')
     const [confirmNewPassword, setConfirmNewPassword] = useState('')
 
-    const { login, register, isAuthenticated, user, isAdmin } = useAuth()
+    const { login, register, forgotPassword, isAuthenticated, user, isAdmin } = useAuth()
     const { isDarkMode, toggleTheme } = useTheme()
     const navigate = useNavigate()
 
@@ -51,26 +53,43 @@ export default function LoginPage() {
         }
     }, [isAuthenticated, user, isAdmin, navigate])
 
+    // Login con servicio real
     const handleLogin = async (e) => {
         e.preventDefault()
         setError('')
         setLoading(true)
 
-        setTimeout(() => {
-            const result = login(email, password)
+        try {
+            const result = await login(email, password)
             if (result.success) {
                 setLoading(false)
+                // La redirección se maneja en el useEffect
             } else {
                 setError(result.error)
                 setLoading(false)
             }
-        }, 1500)
+        } catch (err) {
+            console.error('Error en login:', err)
+            setError('Error al iniciar sesión. Intenta nuevamente.')
+            setLoading(false)
+        }
     }
 
+    // Registro con todos los campos
     const handleRegister = async (e) => {
         e.preventDefault()
         setError('')
         setSuccess('')
+
+        if (!name || name.trim().length < 2) {
+            setError('El nombre debe tener al menos 2 caracteres')
+            return
+        }
+
+        if (!email || !email.includes('@')) {
+            setError('Ingresa un correo electrónico válido')
+            return
+        }
 
         if (password !== confirmPassword) {
             setError('Las contraseñas no coinciden')
@@ -84,11 +103,18 @@ export default function LoginPage() {
 
         setLoading(true)
 
-        setTimeout(() => {
-            const result = register(name, email, password)
+        try {
+            const result = await register(name, email, password, telefono, ubicacion)
+            
             if (result.success) {
                 setSuccess(result.message || '🎉 ¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.')
-                setLoading(false)
+                setName('')
+                setEmail('')
+                setPassword('')
+                setConfirmPassword('')
+                setTelefono('')
+                setUbicacion('')
+                
                 setTimeout(() => {
                     setActiveTab('login')
                     setEmail(email)
@@ -96,26 +122,41 @@ export default function LoginPage() {
                 }, 2500)
             } else {
                 setError(result.error)
-                setLoading(false)
             }
-        }, 1500)
+        } catch (err) {
+            console.error('Error en registro:', err)
+            setError('Error al crear la cuenta. Intenta nuevamente.')
+        } finally {
+            setLoading(false)
+        }
     }
 
+    // Recuperar contraseña
     const handleResetPassword = async (e) => {
         e.preventDefault()
         setError('')
         setLoading(true)
 
-        setTimeout(() => {
-            setResetStep('sent')
+        try {
+            const result = await forgotPassword(resetEmail)
+            if (result.success) {
+                setResetStep('sent')
+                setSuccess(result.message)
+            } else {
+                setError(result.error)
+            }
+        } catch (err) {
+            console.error('Error en recuperación:', err)
+            setError('Error al enviar el correo de recuperación. Intenta nuevamente.')
+        } finally {
             setLoading(false)
-        }, 1500)
+        }
     }
 
     const handleConfirmReset = async (e) => {
         e.preventDefault()
         setError('')
-
+        
         if (newPassword !== confirmNewPassword) {
             setError('Las contraseñas no coinciden')
             return
@@ -128,11 +169,22 @@ export default function LoginPage() {
 
         setLoading(true)
 
-        setTimeout(() => {
-            setResetStep('confirm')
-            setSuccess('✅ ¡Contraseña actualizada exitosamente!')
+        try {
+            // Aquí se implementaría la confirmación del reset con el token
+            setTimeout(() => {
+                setResetStep('confirm')
+                setSuccess('✅ ¡Contraseña actualizada exitosamente!')
+                setLoading(false)
+                setTimeout(() => {
+                    setActiveTab('login')
+                    setResetStep('request')
+                    setSuccess('')
+                }, 2000)
+            }, 1500)
+        } catch (err) {
+            setError('Error al actualizar la contraseña.')
             setLoading(false)
-        }, 1500)
+        }
     }
 
     const handleBackToLogin = () => {
@@ -531,6 +583,10 @@ export default function LoginPage() {
                                                         setPassword={setPassword}
                                                         confirmPassword={confirmPassword}
                                                         setConfirmPassword={setConfirmPassword}
+                                                        telefono={telefono}
+                                                        setTelefono={setTelefono}
+                                                        ubicacion={ubicacion}
+                                                        setUbicacion={setUbicacion}
                                                         error={error}
                                                         success={success}
                                                         loading={loading}

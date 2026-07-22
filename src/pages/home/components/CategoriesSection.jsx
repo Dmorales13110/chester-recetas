@@ -161,17 +161,19 @@ const CategoriesSection = ({ categories }) => {
                             <Text fw={600} size="md" mt="md" style={{ color: 'var(--text-h)' }}>
                                 {cat.name}
                             </Text>
-                            <Badge
-                                variant="light"
-                                size="sm"
-                                mt={8}
-                                style={{
-                                    background: 'var(--accent-bg)',
-                                    color: 'var(--accent)',
-                                }}
-                            >
-                                {cat.count} recetas
-                            </Badge>
+                            <div style={{ textAlign: 'center' }}>
+                                <Badge
+                                    variant="light"
+                                    size="sm"
+                                    mt={8}
+                                    style={{
+                                        background: 'var(--accent-bg)',
+                                        color: 'var(--accent)',
+                                    }}
+                                >
+                                    {cat.count} recetas
+                                </Badge>
+                            </div>
                         </Card>
                     </motion.div>
                 ))}

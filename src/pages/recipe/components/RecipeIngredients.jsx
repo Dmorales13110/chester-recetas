@@ -1,14 +1,18 @@
+// pages/recipe/components/RecipeIngredients.jsx
 import { Paper, Title, Text, List, ThemeIcon, Group, Badge } from '@mantine/core'
 import { CheckCircle, ChefHat } from 'lucide-react'
 
 const RecipeIngredients = ({ ingredients, servings, originalServings }) => {
+    // ingredients ya viene como array de strings: ["500 gramos Pechuga de Pollo", "2 cucharadas Curry en Polvo", ...]
+    //  Ya no necesitas hacer más transformaciones
+    
     return (
-        <Paper
-            withBorder
-            p="xl"
-            radius="xl"
-            style={{
-                background: 'var(--card-bg)',
+        <Paper 
+            withBorder 
+            p="xl" 
+            radius="xl" 
+            style={{ 
+                background: 'var(--card-bg)', 
                 borderColor: 'var(--border)',
                 height: '100%'
             }}
@@ -21,7 +25,7 @@ const RecipeIngredients = ({ ingredients, servings, originalServings }) => {
                     </Badge>
                 )}
             </Group>
-
+            
             <List
                 spacing="sm"
                 size="sm"
@@ -37,7 +41,7 @@ const RecipeIngredients = ({ ingredients, servings, originalServings }) => {
                     </List.Item>
                 ))}
             </List>
-
+            
             <Group gap="xs" mt="lg" pt="md" style={{ borderTop: `1px solid var(--border)` }}>
                 <ChefHat size={14} color="#e67e22" />
                 <Text size="xs" style={{ color: 'var(--text-secondary)' }}>

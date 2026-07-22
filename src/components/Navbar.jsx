@@ -15,7 +15,8 @@ import {
     Stack,
     ActionIcon,
     Tooltip,
-    Switch
+    Switch,
+    Badge
 } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import {
@@ -31,7 +32,8 @@ import {
     LogOut,
     Sun,
     Moon,
-    Info
+    Info,
+    LogIn
 } from 'lucide-react'
 import { useFavorites } from '../context/FavoritesContext'
 import { useTheme } from '../context/ThemeContext'
@@ -53,7 +55,7 @@ function Navbar() {
     const { favorites } = useFavorites()
     const { isDarkMode, toggleTheme } = useTheme()
     const navigate = useNavigate()
-    const { user, logout } = useAuth()
+    const { user, logout, isAuthenticated } = useAuth()
 
     const handleLogout = () => {
         logout()
@@ -96,6 +98,30 @@ function Navbar() {
     }
 
     const colors = isDarkMode ? darkModeColors : lightModeColors
+
+    // Determinar qué mostrar en el avatar
+    const getAvatarContent = () => {
+        if (isAuthenticated && user) {
+            return user.name?.charAt(0) || <User size={18} />
+        }
+        return <User size={18} />
+    }
+
+    // Determinar el nombre a mostrar
+    const getDisplayName = () => {
+        if (isAuthenticated && user) {
+            return user.name || 'Usuario'
+        }
+        return 'Invitado'
+    }
+
+    // Determinar el email a mostrar
+    const getDisplayEmail = () => {
+        if (isAuthenticated && user) {
+            return user.email || 'usuario@chester.com'
+        }
+        return 'invitado@chester.com'
+    }
 
     return (
         <>
@@ -200,12 +226,18 @@ function Navbar() {
                                     color={isDarkMode ? '#f5a623' : '#e67e22'}
                                     size={10}
                                     offset={4}
-                                    disabled={favorites.length === 0}
+                                    disabled={!isAuthenticated || favorites.length === 0}
                                 >
                                     <ActionIcon
                                         variant="subtle"
                                         size="lg"
-                                        onClick={() => navigate('/perfil')}
+                                        onClick={() => {
+                                            if (isAuthenticated) {
+                                                navigate('/perfil')
+                                            } else {
+                                                navigate('/login')
+                                            }
+                                        }}
                                         radius="xl"
                                         style={{ color: colors.iconColor, transition: 'all 0.2s' }}
                                         styles={{
@@ -262,7 +294,7 @@ function Navbar() {
                                                 transition: 'all 0.2s',
                                             }}
                                         >
-                                            {user?.name?.charAt(0) || <User size={18} />}
+                                            {getAvatarContent()}
                                         </Avatar>
                                     </motion.div>
                                 </Menu.Target>
@@ -272,103 +304,168 @@ function Navbar() {
                                     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                                 }}>
                                     <Menu.Label style={{ color: colors.text }}>
-                                        {user?.name || 'Usuario'}
+                                        {getDisplayName()}
                                     </Menu.Label>
                                     <Menu.Divider style={{ borderColor: colors.dropdownBorder }} />
-                                    <Menu.Item
-                                        leftSection={<User size={14} />}
-                                        onClick={() => navigate('/perfil')}
-                                        style={{
-                                            color: colors.text,
-                                            transition: 'all 0.2s',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = colors.menuHoverBg
-                                            e.currentTarget.style.color = colors.menuHoverColor
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent'
-                                            e.currentTarget.style.color = colors.text
-                                        }}
-                                    >
-                                        Mi perfil
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        leftSection={<Heart size={14} />}
-                                        onClick={() => navigate('/perfil')}
-                                        style={{
-                                            color: colors.text,
-                                            transition: 'all 0.2s',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = colors.menuHoverBg
-                                            e.currentTarget.style.color = colors.menuHoverColor
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent'
-                                            e.currentTarget.style.color = colors.text
-                                        }}
-                                    >
-                                        Mis favoritos
-                                        {favorites.length > 0 && (
-                                            <Text component="span" size="xs" ml={4} style={{ color: colors.menuHoverColor }}>
-                                                ({favorites.length})
-                                            </Text>
-                                        )}
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        leftSection={isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
-                                        onClick={toggleTheme}
-                                        style={{
-                                            color: colors.text,
-                                            transition: 'all 0.2s',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = colors.menuHoverBg
-                                            e.currentTarget.style.color = colors.menuHoverColor
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent'
-                                            e.currentTarget.style.color = colors.text
-                                        }}
-                                    >
-                                        {isDarkMode ? 'Modo claro' : 'Modo oscuro'}
-                                    </Menu.Item>
-                                    <Menu.Item
-                                        leftSection={<Settings size={14} />}
-                                        onClick={openSettings}
-                                        style={{
-                                            color: colors.text,
-                                            transition: 'all 0.2s',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = colors.menuHoverBg
-                                            e.currentTarget.style.color = colors.menuHoverColor
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent'
-                                            e.currentTarget.style.color = colors.text
-                                        }}
-                                    >
-                                        Configuración
-                                    </Menu.Item>
-                                    <Divider style={{ borderColor: colors.dropdownBorder }} />
-                                    <Menu.Item
-                                        leftSection={<LogOut size={14} />}
-                                        onClick={handleLogout}
-                                        style={{
-                                            color: '#dc2626',
-                                            transition: 'all 0.2s',
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.backgroundColor = '#fee2e2'
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.backgroundColor = 'transparent'
-                                        }}
-                                    >
-                                        Cerrar sesión
-                                    </Menu.Item>
+                                    
+                                    {isAuthenticated ? (
+                                        // Opciones para usuarios autenticados
+                                        <>
+                                            <Menu.Item
+                                                leftSection={<User size={14} />}
+                                                onClick={() => navigate('/perfil')}
+                                                style={{
+                                                    color: colors.text,
+                                                    transition: 'all 0.2s',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = colors.menuHoverBg
+                                                    e.currentTarget.style.color = colors.menuHoverColor
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = 'transparent'
+                                                    e.currentTarget.style.color = colors.text
+                                                }}
+                                            >
+                                                Mi perfil
+                                            </Menu.Item>
+                                            <Menu.Item
+                                                leftSection={<Heart size={14} />}
+                                                onClick={() => navigate('/perfil')}
+                                                style={{
+                                                    color: colors.text,
+                                                    transition: 'all 0.2s',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = colors.menuHoverBg
+                                                    e.currentTarget.style.color = colors.menuHoverColor
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = 'transparent'
+                                                    e.currentTarget.style.color = colors.text
+                                                }}
+                                            >
+                                                Mis favoritos
+                                                {favorites.length > 0 && (
+                                                    <Text component="span" size="xs" ml={4} style={{ color: colors.menuHoverColor }}>
+                                                        ({favorites.length})
+                                                    </Text>
+                                                )}
+                                            </Menu.Item>
+                                            <Menu.Item
+                                                leftSection={isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
+                                                onClick={toggleTheme}
+                                                style={{
+                                                    color: colors.text,
+                                                    transition: 'all 0.2s',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = colors.menuHoverBg
+                                                    e.currentTarget.style.color = colors.menuHoverColor
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = 'transparent'
+                                                    e.currentTarget.style.color = colors.text
+                                                }}
+                                            >
+                                                {isDarkMode ? 'Modo claro' : 'Modo oscuro'}
+                                            </Menu.Item>
+                                            <Menu.Item
+                                                leftSection={<Settings size={14} />}
+                                                onClick={openSettings}
+                                                style={{
+                                                    color: colors.text,
+                                                    transition: 'all 0.2s',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = colors.menuHoverBg
+                                                    e.currentTarget.style.color = colors.menuHoverColor
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = 'transparent'
+                                                    e.currentTarget.style.color = colors.text
+                                                }}
+                                            >
+                                                Configuración
+                                            </Menu.Item>
+                                            <Menu.Divider style={{ borderColor: colors.dropdownBorder }} />
+                                            <Menu.Item
+                                                leftSection={<LogOut size={14} />}
+                                                onClick={handleLogout}
+                                                style={{
+                                                    color: '#dc2626',
+                                                    transition: 'all 0.2s',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = '#fee2e2'
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = 'transparent'
+                                                }}
+                                            >
+                                                Cerrar sesión
+                                            </Menu.Item>
+                                        </>
+                                    ) : (
+                                        // Opciones para invitados
+                                        <>
+                                            <Menu.Item
+                                                leftSection={<LogIn size={14} />}
+                                                onClick={() => navigate('/login')}
+                                                style={{
+                                                    color: colors.text,
+                                                    transition: 'all 0.2s',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = colors.menuHoverBg
+                                                    e.currentTarget.style.color = colors.menuHoverColor
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = 'transparent'
+                                                    e.currentTarget.style.color = colors.text
+                                                }}
+                                            >
+                                                Iniciar sesión
+                                            </Menu.Item>
+                                            <Menu.Item
+                                                leftSection={<User size={14} />}
+                                                onClick={() => navigate('/login')}
+                                                style={{
+                                                    color: colors.text,
+                                                    transition: 'all 0.2s',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = colors.menuHoverBg
+                                                    e.currentTarget.style.color = colors.menuHoverColor
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = 'transparent'
+                                                    e.currentTarget.style.color = colors.text
+                                                }}
+                                            >
+                                                Registrarse
+                                            </Menu.Item>
+                                            <Menu.Divider style={{ borderColor: colors.dropdownBorder }} />
+                                            <Menu.Item
+                                                leftSection={isDarkMode ? <Sun size={14} /> : <Moon size={14} />}
+                                                onClick={toggleTheme}
+                                                style={{
+                                                    color: colors.text,
+                                                    transition: 'all 0.2s',
+                                                }}
+                                                onMouseEnter={(e) => {
+                                                    e.currentTarget.style.backgroundColor = colors.menuHoverBg
+                                                    e.currentTarget.style.color = colors.menuHoverColor
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.style.backgroundColor = 'transparent'
+                                                    e.currentTarget.style.color = colors.text
+                                                }}
+                                            >
+                                                {isDarkMode ? 'Modo claro' : 'Modo oscuro'}
+                                            </Menu.Item>
+                                        </>
+                                    )}
                                 </Menu.Dropdown>
                             </Menu>
                         </Group>
@@ -417,15 +514,20 @@ function Navbar() {
                             borderRadius: 12
                         }}>
                             <Avatar size="lg" radius="xl" style={{ background: colors.avatarBg, color: colors.avatarColor }}>
-                                {user?.name?.charAt(0) || <User size={24} />}
+                                {getAvatarContent()}
                             </Avatar>
                             <div>
                                 <Text fw={600} style={{ color: isDarkMode ? '#f1f5f9' : '#1a1a2e' }}>
-                                    {user?.name || 'Usuario Demo'}
+                                    {getDisplayName()}
                                 </Text>
                                 <Text size="xs" style={{ color: isDarkMode ? '#94a3b8' : '#64748b' }}>
-                                    {user?.email || 'usuario@chester.com'}
+                                    {getDisplayEmail()}
                                 </Text>
+                                {!isAuthenticated && (
+                                    <Badge size="xs" color="orange" variant="light" mt={4}>
+                                        Invitado
+                                    </Badge>
+                                )}
                             </div>
                         </Group>
                     </motion.div>
@@ -486,108 +588,181 @@ function Navbar() {
 
                     <Divider style={{ borderColor: colors.navBorder }} />
 
-                    <Button
-                        variant="subtle"
-                        leftSection={<Heart size={18} />}
-                        justify="flex-start"
-                        fullWidth
-                        onClick={() => {
-                            close()
-                            navigate('/perfil')
-                        }}
-                        style={{ color: colors.text }}
-                        styles={{
-                            root: {
-                                '&:hover': {
-                                    backgroundColor: colors.iconHoverBg,
-                                    color: colors.textHover,
-                                }
-                            }
-                        }}
-                    >
-                        Mis favoritos ({favorites.length})
-                    </Button>
+                    {isAuthenticated ? (
+                        // Opciones para autenticados en móvil
+                        <>
+                            <Button
+                                variant="subtle"
+                                leftSection={<Heart size={18} />}
+                                justify="flex-start"
+                                fullWidth
+                                onClick={() => {
+                                    close()
+                                    navigate('/perfil')
+                                }}
+                                style={{ color: colors.text }}
+                                styles={{
+                                    root: {
+                                        '&:hover': {
+                                            backgroundColor: colors.iconHoverBg,
+                                            color: colors.textHover,
+                                        }
+                                    }
+                                }}
+                            >
+                                Mis favoritos ({favorites.length})
+                            </Button>
 
-                    <Button
-                        variant="subtle"
-                        leftSection={<User size={18} />}
-                        justify="flex-start"
-                        fullWidth
-                        onClick={() => {
-                            close()
-                            navigate('/perfil')
-                        }}
-                        style={{ color: colors.text }}
-                        styles={{
-                            root: {
-                                '&:hover': {
-                                    backgroundColor: colors.iconHoverBg,
-                                    color: colors.textHover,
-                                }
-                            }
-                        }}
-                    >
-                        Mi perfil
-                    </Button>
+                            <Button
+                                variant="subtle"
+                                leftSection={<User size={18} />}
+                                justify="flex-start"
+                                fullWidth
+                                onClick={() => {
+                                    close()
+                                    navigate('/perfil')
+                                }}
+                                style={{ color: colors.text }}
+                                styles={{
+                                    root: {
+                                        '&:hover': {
+                                            backgroundColor: colors.iconHoverBg,
+                                            color: colors.textHover,
+                                        }
+                                    }
+                                }}
+                            >
+                                Mi perfil
+                            </Button>
 
-                    <Button
-                        variant="subtle"
-                        leftSection={isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-                        justify="flex-start"
-                        fullWidth
-                        onClick={toggleTheme}
-                        style={{ color: colors.text }}
-                        styles={{
-                            root: {
-                                '&:hover': {
-                                    backgroundColor: colors.iconHoverBg,
-                                    color: colors.textHover,
-                                }
-                            }
-                        }}
-                    >
-                        {isDarkMode ? 'Modo claro' : 'Modo oscuro'}
-                    </Button>
+                            <Button
+                                variant="subtle"
+                                leftSection={isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+                                justify="flex-start"
+                                fullWidth
+                                onClick={toggleTheme}
+                                style={{ color: colors.text }}
+                                styles={{
+                                    root: {
+                                        '&:hover': {
+                                            backgroundColor: colors.iconHoverBg,
+                                            color: colors.textHover,
+                                        }
+                                    }
+                                }}
+                            >
+                                {isDarkMode ? 'Modo claro' : 'Modo oscuro'}
+                            </Button>
 
-                    <Button
-                        variant="subtle"
-                        leftSection={<Settings size={18} />}
-                        justify="flex-start"
-                        fullWidth
-                        onClick={openSettings}
-                        style={{ color: colors.text }}
-                        styles={{
-                            root: {
-                                '&:hover': {
-                                    backgroundColor: colors.iconHoverBg,
-                                    color: colors.textHover,
-                                }
-                            }
-                        }}
-                    >
-                        Configuración
-                    </Button>
+                            <Button
+                                variant="subtle"
+                                leftSection={<Settings size={18} />}
+                                justify="flex-start"
+                                fullWidth
+                                onClick={openSettings}
+                                style={{ color: colors.text }}
+                                styles={{
+                                    root: {
+                                        '&:hover': {
+                                            backgroundColor: colors.iconHoverBg,
+                                            color: colors.textHover,
+                                        }
+                                    }
+                                }}
+                            >
+                                Configuración
+                            </Button>
 
-                    <Divider style={{ borderColor: colors.navBorder }} />
+                            <Divider style={{ borderColor: colors.navBorder }} />
 
-                    <Button
-                        variant="subtle"
-                        color="red"
-                        leftSection={<LogOut size={18} />}
-                        justify="flex-start"
-                        fullWidth
-                        onClick={handleLogout}
-                        styles={{
-                            root: {
-                                '&:hover': {
-                                    backgroundColor: '#fee2e2',
-                                    color: '#dc2626',
-                                }
-                            }
-                        }}
-                    >
-                        Cerrar sesión
-                    </Button>
+                            <Button
+                                variant="subtle"
+                                color="red"
+                                leftSection={<LogOut size={18} />}
+                                justify="flex-start"
+                                fullWidth
+                                onClick={handleLogout}
+                                styles={{
+                                    root: {
+                                        '&:hover': {
+                                            backgroundColor: '#fee2e2',
+                                            color: '#dc2626',
+                                        }
+                                    }
+                                }}
+                            >
+                                Cerrar sesión
+                            </Button>
+                        </>
+                    ) : (
+                        // Opciones para invitados en móvil
+                        <>
+                            <Button
+                                variant="subtle"
+                                leftSection={<LogIn size={18} />}
+                                justify="flex-start"
+                                fullWidth
+                                onClick={() => {
+                                    close()
+                                    navigate('/login')
+                                }}
+                                style={{ color: colors.text }}
+                                styles={{
+                                    root: {
+                                        '&:hover': {
+                                            backgroundColor: colors.iconHoverBg,
+                                            color: colors.textHover,
+                                        }
+                                    }
+                                }}
+                            >
+                                Iniciar sesión
+                            </Button>
+
+                            <Button
+                                variant="subtle"
+                                leftSection={<User size={18} />}
+                                justify="flex-start"
+                                fullWidth
+                                onClick={() => {
+                                    close()
+                                    navigate('/login')
+                                }}
+                                style={{ color: colors.text }}
+                                styles={{
+                                    root: {
+                                        '&:hover': {
+                                            backgroundColor: colors.iconHoverBg,
+                                            color: colors.textHover,
+                                        }
+                                    }
+                                }}
+                            >
+                                Registrarse
+                            </Button>
+
+                            <Divider style={{ borderColor: colors.navBorder }} />
+
+                            <Button
+                                variant="subtle"
+                                leftSection={isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+                                justify="flex-start"
+                                fullWidth
+                                onClick={toggleTheme}
+                                style={{ color: colors.text }}
+                                styles={{
+                                    root: {
+                                        '&:hover': {
+                                            backgroundColor: colors.iconHoverBg,
+                                            color: colors.textHover,
+                                        }
+                                    }
+                                }}
+                            >
+                                {isDarkMode ? 'Modo claro' : 'Modo oscuro'}
+                            </Button>
+                        </>
+                    )}
                 </Stack>
             </Drawer>
 

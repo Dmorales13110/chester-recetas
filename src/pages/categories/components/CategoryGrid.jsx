@@ -41,10 +41,18 @@ const CategoryGrid = ({ categories, title, subtitle }) => {
                                 background: 'var(--card-bg)',
                                 borderColor: 'var(--border)'
                             }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--accent)'
+                                e.currentTarget.style.boxShadow = 'var(--shadow-hover)'
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--border)'
+                                e.currentTarget.style.boxShadow = 'none'
+                            }}
                         >
                             <div style={{ position: 'relative', height: 200 }}>
                                 <Image
-                                    src={category.thumbnail}
+                                    src={category.thumbnail || category.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=300&fit=crop'}
                                     height={200}
                                     fit="cover"
                                     alt={category.name}
@@ -61,7 +69,15 @@ const CategoryGrid = ({ categories, title, subtitle }) => {
                                     padding: 16,
                                     zIndex: 2,
                                 }}>
-                                    <Badge color={category.color} variant="filled" size="sm" mb="xs">
+                                    <Badge 
+                                        variant="filled" 
+                                        size="sm" 
+                                        mb="xs"
+                                        style={{
+                                            background: 'var(--accent)',
+                                            color: 'white',
+                                        }}
+                                    >
                                         {category.count} recetas
                                     </Badge>
                                     <Text fw={700} size="lg" c="white">{category.name}</Text>
@@ -73,11 +89,27 @@ const CategoryGrid = ({ categories, title, subtitle }) => {
 
                             <Group justify="space-between" p="md">
                                 <Group gap={4}>
-                                    <Star size={14} color="#e67e22" />
+                                    <Star size={14} style={{ color: 'var(--accent)' }} />
                                     <Text size="sm" style={{ color: 'var(--text-secondary)' }}>4.8</Text>
-                                    <Text size="xs" style={{ color: 'var(--text-secondary)' }}>• {category.popularRecipes[0]}</Text>
+                                    <Text size="xs" style={{ color: 'var(--text-secondary)' }}>
+                                        • {category.popularRecipes?.[0] || 'Popular'}
+                                    </Text>
                                 </Group>
-                                <Button variant="subtle" size="xs" color="orange" rightSection={<ArrowRight size={12} />}>
+                                <Button 
+                                    variant="subtle" 
+                                    size="xs" 
+                                    color="orange" 
+                                    rightSection={<ArrowRight size={12} />}
+                                    styles={{
+                                        root: {
+                                            color: 'var(--text)',
+                                            '&:hover': {
+                                                backgroundColor: 'var(--accent-bg)',
+                                                color: 'var(--accent)',
+                                            }
+                                        }
+                                    }}
+                                >
                                     Ver más
                                 </Button>
                             </Group>

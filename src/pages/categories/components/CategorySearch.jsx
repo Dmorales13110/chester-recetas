@@ -1,7 +1,6 @@
 import { TextInput, Group, Button, Paper } from '@mantine/core'
 import { Search, X } from 'lucide-react'
 
-//input para poder hacer busquedas dentro de las categorias
 const CategorySearch = ({ searchQuery, setSearchQuery }) => {
     return (
         <Paper
@@ -26,6 +25,9 @@ const CategorySearch = ({ searchQuery, setSearchQuery }) => {
                         background: 'var(--input-bg)',
                         borderColor: 'var(--border)',
                         color: 'var(--text)',
+                        '&:focus': {
+                            borderColor: '#e67e22',
+                        },
                         '::placeholder': {
                             color: 'var(--text-secondary)'
                         }

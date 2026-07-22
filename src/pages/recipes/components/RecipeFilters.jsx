@@ -7,6 +7,7 @@ import {
     ActionIcon,
 } from '@mantine/core'
 import { Search, Filter, X, SlidersHorizontal } from 'lucide-react'
+import { difficultyOptions, timeOptions, sortOptions } from '../hooks/useRecipes'
 
 const RecipeFilters = ({
     searchQuery,
@@ -21,39 +22,8 @@ const RecipeFilters = ({
     setSortBy,
     clearFilters,
     hasActiveFilters,
+    availableCategories,
 }) => {
-    const availableCategories = [
-        { value: 'all', label: 'Todas' },
-        { value: 'pastas', label: 'Pastas' },
-        { value: 'ensaladas', label: 'Ensaladas' },
-        { value: 'postres', label: 'Postres' },
-        { value: 'carnes', label: 'Carnes' },
-        { value: 'pescados', label: 'Pescados' },
-        { value: 'vegetariano', label: 'Vegetariano' },
-        { value: 'quesos', label: 'Quesos' },
-    ]
-
-    const difficultyOptions = [
-        { value: 'all', label: 'Todas' },
-        { value: 'fácil', label: 'Fácil' },
-        { value: 'media', label: 'Media' },
-        { value: 'difícil', label: 'Difícil' },
-    ]
-
-    const timeOptions = [
-        { value: 'all', label: 'Cualquier tiempo' },
-        { value: '15', label: 'Menos de 15 min' },
-        { value: '30', label: 'Menos de 30 min' },
-        { value: '60', label: 'Menos de 60 min' },
-    ]
-
-    const sortOptions = [
-        { value: 'recent', label: 'Más recientes' },
-        { value: 'popular', label: 'Más populares' },
-        { value: 'rating', label: 'Mejor valoradas' },
-        { value: 'time_asc', label: 'Tiempo: menor a mayor' },
-    ]
-
     // Estilos para inputs
     const inputStyles = {
         input: {
@@ -88,6 +58,7 @@ const RecipeFilters = ({
             }}
         >
             <Group justify="space-between" wrap="wrap" gap="md">
+                {/* Búsqueda */}
                 <div style={{ flex: 2, minWidth: 200, position: 'relative' }}>
                     <div style={{
                         position: 'absolute',
@@ -132,9 +103,10 @@ const RecipeFilters = ({
                     />
                 </div>
 
+                {/* Categoría - Dinámica */}
                 <Select
                     placeholder="Categoría"
-                    data={availableCategories}
+                    data={availableCategories || [{ value: 'all', label: 'Todas' }]}
                     value={selectedCategory}
                     onChange={setSelectedCategory}
                     style={{ width: 180 }}
@@ -142,6 +114,7 @@ const RecipeFilters = ({
                     styles={inputStyles}
                 />
 
+                {/* Dificultad */}
                 <Select
                     placeholder="Dificultad"
                     data={difficultyOptions}
@@ -152,6 +125,7 @@ const RecipeFilters = ({
                     styles={inputStyles}
                 />
 
+                {/* Tiempo */}
                 <Select
                     placeholder="Tiempo máximo"
                     data={timeOptions}
@@ -162,6 +136,7 @@ const RecipeFilters = ({
                     styles={inputStyles}
                 />
 
+                {/* Ordenar */}
                 <Select
                     placeholder="Ordenar por"
                     data={sortOptions}
@@ -173,6 +148,7 @@ const RecipeFilters = ({
                     styles={inputStyles}
                 />
 
+                {/* Limpiar filtros */}
                 {hasActiveFilters && (
                     <Button
                         variant="light"

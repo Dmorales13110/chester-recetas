@@ -1,55 +1,16 @@
 import { useState, useEffect, useCallback } from 'react'
+import { recipeService, categoryService } from '../../../services'
 import chesterimg from '../../../assets/image.png'
 
-// Mock data
-const featuredRecipes = [
-    {
-        id: 1,
-        title: 'Pasta al Pesto',
-        category: 'Pastas',
-        time: '20 min',
-        difficulty: 'Fácil',
-        rating: 4.8,
-        image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=500&h=300&fit=crop',
-    },
-    {
-        id: 2,
-        title: 'Ensalada César',
-        category: 'Ensaladas',
-        time: '15 min',
-        difficulty: 'Fácil',
-        rating: 4.6,
-        image: 'https://images.unsplash.com/photo-1550304943-4f24f54dd8ca?w=500&h=300&fit=crop',
-    },
-    {
-        id: 3,
-        title: 'Tarta de Queso',
-        category: 'Postres',
-        time: '45 min',
-        difficulty: 'Media',
-        rating: 4.9,
-        image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9589?w=500&h=300&fit=crop',
-    },
-    {
-        id: 4,
-        title: 'Paella Mixta',
-        category: 'Arroces',
-        time: '60 min',
-        difficulty: 'Media',
-        rating: 4.7,
-        image: 'https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=500&h=300&fit=crop',
-    },
+const heroBackgrounds = [
+    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1920&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1920&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=1920&h=600&fit=crop',
+    'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1920&h=600&fit=crop',
+    chesterimg
 ]
 
-const categories = [
-    { id: 1, name: 'Desayunos', iconName: 'Coffee', color: 'yellow', count: 24 },
-    { id: 2, name: 'Ensaladas', iconName: 'Salad', color: 'green', count: 18 },
-    { id: 3, name: 'Pastas', iconName: 'Pizza', color: 'orange', count: 32 },
-    { id: 4, name: 'Postres', iconName: 'Cake', color: 'pink', count: 45 },
-    { id: 5, name: 'Cenas', iconName: 'Soup', color: 'red', count: 28 },
-    { id: 6, name: 'Bebidas', iconName: 'Coffee', color: 'blue', count: 15 },
-]
-
+// Testimonios mock
 const testimonials = [
     {
         id: 1,
@@ -77,24 +38,127 @@ const testimonials = [
     },
 ]
 
-const heroBackgrounds = [
-    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1920&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1920&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=1920&h=600&fit=crop',
-    'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=1920&h=600&fit=crop',
-    chesterimg
-]
+// Mapeo de iconos para categorías
+const iconMap = {
+    'Desayunos': 'Coffee',
+    'Ensaladas': 'Salad',
+    'Pastas': 'Pizza',
+    'Postres': 'Cake',
+    'Cenas': 'Soup',
+    'Sopas': 'Soup',
+    'Pescados': 'Fish',
+    'Carnes': 'Beef',
+    'Arroces': 'Utensils',
+    'Bebidas': 'Coffee',
+    'Quesos': 'Cheese',
+    'Galletas': 'Cookie',
+    'Huevos': 'Egg'
+}
+
+const colorMap = {
+    'Desayunos': 'yellow',
+    'Ensaladas': 'green',
+    'Pastas': 'orange',
+    'Postres': 'pink',
+    'Cenas': 'red',
+    'Sopas': 'blue',
+    'Pescados': 'cyan',
+    'Carnes': 'brown',
+    'Arroces': 'orange',
+    'Bebidas': 'blue',
+    'Quesos': 'yellow',
+    'Galletas': 'purple',
+    'Huevos': 'yellow'
+}
 
 export const useHomePage = () => {
     const [email, setEmail] = useState('')
     const [currentHeroIndex, setCurrentHeroIndex] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
+    const [featuredRecipes, setFeaturedRecipes] = useState([])
+    const [categories, setCategories] = useState([])
+
+    // Función para mapear receta de la API al formato del componente
+    const mapRecipeToFormat = (recipe) => ({
+        id: recipe.id,
+        title: recipe.nombre || 'Receta sin título',
+        category: recipe.id_categoria ? 'General' : 'General',
+        time: `${recipe.tiempo_total || 30} min`,
+        difficulty: recipe.dificultad || 'Media',
+        rating: recipe.rating || 0,
+        image: recipe.imagen || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=300&fit=crop',
+        description: recipe.descripcion || '',
+    })
+
+    //  Función para mapear categoría de la API al formato del componente
+    const mapCategoryToFormat = (category) => {
+        //  Calcular el número de recetas para esta categoría
+        // Contamos cuántas recetas tienen esta categoría
+        const count = category.recetas_count || category.recetas?.length || 0
+        
+        return {
+            id: category.id,
+            name: category.nombre,
+            slug: category.nombre?.toLowerCase().replace(/\s/g, '-') || '',
+            iconName: iconMap[category.nombre] || 'Utensils',
+            color: colorMap[category.nombre] || 'gray',
+            count: count,
+            description: category.descripcion || `Recetas de ${category.nombre}`,
+            featured: false,
+            image: category.imagen || '',
+            thumbnail: category.imagen || '',
+            gradient: 'linear-gradient(135deg, #e67e22, #f39c12)',
+            popularRecipes: []
+        }
+    }
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoading(false)
-        }, 500)
-        return () => clearTimeout(timer)
+        const fetchData = async () => {
+            setIsLoading(true)
+            try {
+                //  Obtener todas las recetas para contar por categoría
+                const allRecipesData = await recipeService.getRecipes(0, 100)
+                const allRecipes = allRecipesData || []
+                
+                //  Obtener categorías
+                const categoriesData = await categoryService.getCategories()
+                
+                //  Mapear categorías con conteo de recetas
+                const mappedCategories = (categoriesData || []).map(cat => {
+                    // Contar recetas que pertenecen a esta categoría
+                    const count = allRecipes.filter(r => r.id_categoria === cat.id).length
+                    return {
+                        id: cat.id,
+                        name: cat.nombre,
+                        slug: cat.nombre?.toLowerCase().replace(/\s/g, '-') || '',
+                        iconName: iconMap[cat.nombre] || 'Utensils',
+                        color: colorMap[cat.nombre] || 'gray',
+                        count: count, //  Conteo real
+                        description: cat.descripcion || `Recetas de ${cat.nombre}`,
+                        featured: false,
+                        image: cat.imagen || '',
+                        thumbnail: cat.imagen || '',
+                        gradient: 'linear-gradient(135deg, #e67e22, #f39c12)',
+                        popularRecipes: []
+                    }
+                })
+                setCategories(mappedCategories)
+                
+                // Obtener recetas destacadas
+                const recipesData = await recipeService.getRecipes(0, 4)
+                const mappedRecipes = (recipesData || []).map(mapRecipeToFormat)
+                setFeaturedRecipes(mappedRecipes)
+                
+            } catch (error) {
+                console.error('Error al cargar datos del home:', error)
+                setFeaturedRecipes([])
+                setCategories([])
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchData()
     }, [])
 
     useEffect(() => {

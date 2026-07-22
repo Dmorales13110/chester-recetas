@@ -1,7 +1,7 @@
 import { Title, Text, SimpleGrid, Card, Group, ThemeIcon, Badge, Button } from '@mantine/core'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Coffee, Salad, Pizza, Cake, Soup, Fish, Beef, UtensilsCrossed } from 'lucide-react'
+import { ArrowRight, Coffee, Salad, Pizza, Cake, Soup, Fish, Beef, UtensilsCrossed, Cookie, Egg } from 'lucide-react'
 
 const iconMap = {
     Coffee: <Coffee size={24} />,
@@ -12,6 +12,9 @@ const iconMap = {
     Fish: <Fish size={24} />,
     Beef: <Beef size={24} />,
     UtensilsCrossed: <UtensilsCrossed size={24} />,
+    Cheese: <Cookie size={24} />,
+    Cookie: <Cookie size={24} />,
+    Egg: <Egg size={24} />,
 }
 
 const FeaturedCategories = ({ categories }) => {
@@ -30,6 +33,15 @@ const FeaturedCategories = ({ categories }) => {
                     variant="subtle"
                     color="orange"
                     rightSection={<ArrowRight size={16} />}
+                    styles={{
+                        root: {
+                            color: 'var(--text)',
+                            '&:hover': {
+                                backgroundColor: 'var(--accent-bg)',
+                                color: 'var(--accent)',
+                            }
+                        }
+                    }}
                 >
                     Ver todas
                 </Button>
@@ -59,17 +71,35 @@ const FeaturedCategories = ({ categories }) => {
                                 background: 'var(--card-bg)',
                                 borderColor: 'var(--border)'
                             }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--accent)'
+                                e.currentTarget.style.boxShadow = 'var(--shadow-hover)'
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = 'var(--border)'
+                                e.currentTarget.style.boxShadow = 'none'
+                            }}
                         >
                             <Group justify="space-between" align="flex-start" mb="md">
                                 <ThemeIcon
                                     size={50}
                                     radius="xl"
-                                    color={category.color}
                                     variant="light"
+                                    style={{
+                                        background: 'var(--accent-bg)',
+                                        color: 'var(--accent)',
+                                    }}
                                 >
                                     {iconMap[category.icon] || <UtensilsCrossed size={24} />}
                                 </ThemeIcon>
-                                <Badge color={category.color} variant="light" radius="xl">
+                                <Badge 
+                                    variant="light" 
+                                    radius="xl"
+                                    style={{
+                                        background: 'var(--accent-bg)',
+                                        color: 'var(--accent)',
+                                    }}
+                                >
                                     {category.count} recetas
                                 </Badge>
                             </Group>
@@ -82,8 +112,8 @@ const FeaturedCategories = ({ categories }) => {
                             </Text>
 
                             <Group gap={4} mt="auto">
-                                <Text size="xs" c="orange" fw={500}>Explorar</Text>
-                                <ArrowRight size={14} color="#e67e22" />
+                                <Text size="xs" fw={500} style={{ color: 'var(--accent)' }}>Explorar</Text>
+                                <ArrowRight size={14} style={{ color: 'var(--accent)' }} />
                             </Group>
                         </Card>
                     </motion.div>

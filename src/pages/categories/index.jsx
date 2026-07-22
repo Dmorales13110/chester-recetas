@@ -47,7 +47,19 @@ function CategoriesPage() {
                             <Text size="sm" c="dimmed">
                                 No hay categorías que coincidan con "{searchQuery}"
                             </Text>
-                            <Button variant="subtle" onClick={() => setSearchQuery('')} color="orange">
+                            <Button 
+                                variant="subtle" 
+                                onClick={() => setSearchQuery('')} 
+                                color="orange"
+                                styles={{
+                                    root: {
+                                        color: 'var(--accent)',
+                                        '&:hover': {
+                                            backgroundColor: 'var(--accent-bg)',
+                                        }
+                                    }
+                                }}
+                            >
                                 Limpiar búsqueda
                             </Button>
                         </Stack>

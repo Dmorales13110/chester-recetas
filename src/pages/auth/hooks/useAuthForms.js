@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAuth } from '../../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
 
 export const useAuthForms = () => {
@@ -8,6 +8,8 @@ export const useAuthForms = () => {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [name, setName] = useState('')
+    const [telefono, setTelefono] = useState('')
+    const [ubicacion, setUbicacion] = useState('')
     const [error, setError] = useState('')
     const [success, setSuccess] = useState('')
     const [loading, setLoading] = useState(false)
@@ -17,7 +19,7 @@ export const useAuthForms = () => {
     const [newPassword, setNewPassword] = useState('')
     const [confirmNewPassword, setConfirmNewPassword] = useState('')
     
-    const { login } = useAuth()
+    const { login, register } = useAuth()
     const navigate = useNavigate()
 
     const handleLogin = async (e) => {
@@ -25,15 +27,23 @@ export const useAuthForms = () => {
         setError('')
         setLoading(true)
 
-        setTimeout(() => {
-            const result = login(email, password)
+        try {
+            const result = await login(email, password)
             if (result.success) {
-                navigate('/admin', { replace: true })
+                if (result.user.role === 'admin') {
+                    navigate('/admin', { replace: true })
+                } else {
+                    navigate('/', { replace: true })
+                }
             } else {
                 setError(result.error)
             }
+        } catch (err) {
+            console.error('Error en login:', err)
+            setError('Error al iniciar sesión. Intenta nuevamente.')
+        } finally {
             setLoading(false)
-        }, 1500)
+        }
     }
 
     const handleRegister = async (e) => {
@@ -41,6 +51,17 @@ export const useAuthForms = () => {
         setError('')
         setSuccess('')
         
+        // Validaciones
+        if (!name || name.trim().length < 2) {
+            setError('El nombre debe tener al menos 2 caracteres')
+            return
+        }
+
+        if (!email || !email.includes('@')) {
+            setError('Ingresa un correo electrónico válido')
+            return
+        }
+
         if (password !== confirmPassword) {
             setError('Las contraseñas no coinciden')
             return
@@ -53,14 +74,34 @@ export const useAuthForms = () => {
 
         setLoading(true)
 
-        setTimeout(() => {
-            setSuccess('¡Cuenta creada exitosamente! Redirigiendo al login...')
+        try {
+            // nviar todos los campos incluyendo teléfono y ubicación
+            const result = await register(name, email, password, telefono, ubicacion)
+            
+            if (result.success) {
+                setSuccess(result.message || '🎉 ¡Cuenta creada exitosamente! Ahora puedes iniciar sesión.')
+                // Limpiar campos
+                setName('')
+                setEmail('')
+                setPassword('')
+                setConfirmPassword('')
+                setTelefono('')
+                setUbicacion('')
+                
+                setTimeout(() => {
+                    setActiveTab('login')
+                    setEmail(email)
+                    setSuccess('')
+                }, 2500)
+            } else {
+                setError(result.error)
+            }
+        } catch (err) {
+            console.error('Error en registro:', err)
+            setError('Error al crear la cuenta. Intenta nuevamente.')
+        } finally {
             setLoading(false)
-            setTimeout(() => {
-                setActiveTab('login')
-                setSuccess('')
-            }, 2000)
-        }, 1500)
+        }
     }
 
     const handleResetPassword = async (e) => {
@@ -68,10 +109,16 @@ export const useAuthForms = () => {
         setError('')
         setLoading(true)
 
-        setTimeout(() => {
-            setResetStep('sent')
+        try {
+            // Aquí implementar recuperación de contraseña
+            setTimeout(() => {
+                setResetStep('sent')
+                setLoading(false)
+            }, 1500)
+        } catch (err) {
+            setError('Error al enviar el código de recuperación.')
             setLoading(false)
-        }, 1500)
+        }
     }
 
     const handleConfirmReset = async (e) => {
@@ -90,11 +137,21 @@ export const useAuthForms = () => {
 
         setLoading(true)
 
-        setTimeout(() => {
-            setResetStep('confirm')
-            setSuccess('¡Contraseña actualizada exitosamente!')
+        try {
+            setTimeout(() => {
+                setResetStep('confirm')
+                setSuccess('¡Contraseña actualizada exitosamente!')
+                setLoading(false)
+                setTimeout(() => {
+                    setActiveTab('login')
+                    setResetStep('request')
+                    setSuccess('')
+                }, 2000)
+            }, 1500)
+        } catch (err) {
+            setError('Error al actualizar la contraseña.')
             setLoading(false)
-        }, 1500)
+        }
     }
 
     const handleBackToLogin = () => {
@@ -111,6 +168,8 @@ export const useAuthForms = () => {
         password, setPassword,
         confirmPassword, setConfirmPassword,
         name, setName,
+        telefono, setTelefono,
+        ubicacion, setUbicacion,
         error, setError,
         success, setSuccess,
         loading, setLoading,

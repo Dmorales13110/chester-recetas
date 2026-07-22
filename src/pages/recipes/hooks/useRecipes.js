@@ -1,162 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
+import { recipeService, categoryService } from '../../../services'
 
-// Mock data - Recetas completas
-const allRecipes = [
-    {
-        id: 1,
-        title: 'Pasta al Pesto',
-        category: 'Pastas',
-        slug: 'pasta-al-pesto',
-        time: '20 min',
-        difficulty: 'Fácil',
-        rating: 4.8,
-        calories: 580,
-        servings: 4,
-        image: 'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?w=500&h=300&fit=crop',
-        ingredients: ['Pasta', 'Albahaca', 'Piñones', 'Ajo', 'Queso parmesano', 'Aceite de oliva'],
-        description: 'Una deliciosa pasta italiana con salsa pesto casera, fresca y llena de sabor.'
-    },
-    {
-        id: 2,
-        title: 'Ensalada César',
-        category: 'Ensaladas',
-        slug: 'ensalada-cesar',
-        time: '15 min',
-        difficulty: 'Fácil',
-        rating: 4.6,
-        calories: 320,
-        servings: 2,
-        image: 'https://images.unsplash.com/photo-1550304943-4f24f54dd8ca?w=500&h=300&fit=crop',
-        ingredients: ['Lechuga romana', 'Pollo', 'Crutones', 'Queso parmesano', 'Salsa César'],
-        description: 'La clásica ensalada César con pollo a la plancha y crutones crujientes.'
-    },
-    {
-        id: 3,
-        title: 'Tarta de Queso',
-        category: 'Postres',
-        slug: 'tarta-de-queso',
-        time: '45 min',
-        difficulty: 'Media',
-        rating: 4.9,
-        calories: 420,
-        servings: 8,
-        image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9589?w=500&h=300&fit=crop',
-        ingredients: ['Galletas', 'Mantequilla', 'Queso crema', 'Azúcar', 'Huevos', 'Crema de leche'],
-        description: 'Tarta de queso cremosa con base de galleta, horneada a la perfección.'
-    },
-    {
-        id: 4,
-        title: 'Paella Mixta',
-        category: 'Arroces',
-        slug: 'paella-mixta',
-        time: '60 min',
-        difficulty: 'Media',
-        rating: 4.7,
-        calories: 680,
-        servings: 6,
-        image: 'https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=500&h=300&fit=crop',
-        ingredients: ['Arroz', 'Pollo', 'Conejo', 'Mariscos', 'Verduras', 'Azafrán'],
-        description: 'La auténtica paella valenciana con mariscos y carne, llena de sabor y color.'
-    },
-    {
-        id: 5,
-        title: 'Huevos Rancheros',
-        category: 'Desayunos',
-        slug: 'huevos-rancheros',
-        time: '25 min',
-        difficulty: 'Fácil',
-        rating: 4.5,
-        calories: 450,
-        servings: 2,
-        image: 'https://images.unsplash.com/photo-1525351486363-ef6f36f1f6a4?w=500&h=300&fit=crop',
-        ingredients: ['Huevos', 'Tortillas', 'Frijoles', 'Salsa roja', 'Aguacate'],
-        description: 'Huevos fritos sobre tortillas con salsa de tomate y frijoles refritos.'
-    },
-    {
-        id: 6,
-        title: 'Sopa de Tomate',
-        category: 'Sopas',
-        slug: 'sopa-de-tomate',
-        time: '30 min',
-        difficulty: 'Fácil',
-        rating: 4.4,
-        calories: 180,
-        servings: 4,
-        image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=500&h=300&fit=crop',
-        ingredients: ['Tomates', 'Cebolla', 'Ajo', 'Caldo de verduras', 'Albahaca'],
-        description: 'Sopa cremosa de tomate casera, perfecta para acompañar con crutones.'
-    },
-    {
-        id: 7,
-        title: 'Brownie de Chocolate',
-        category: 'Postres',
-        slug: 'brownie-de-chocolate',
-        time: '35 min',
-        difficulty: 'Fácil',
-        rating: 4.9,
-        calories: 380,
-        servings: 9,
-        image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500&h=300&fit=crop',
-        ingredients: ['Chocolate', 'Mantequilla', 'Azúcar', 'Huevos', 'Harina', 'Nueces'],
-        description: 'Brownies de chocolate súper húmedos con trozos de nuez.'
-    },
-    {
-        id: 8,
-        title: 'Ceviche Peruano',
-        category: 'Pescados',
-        slug: 'ceviche-peruano',
-        time: '20 min',
-        difficulty: 'Media',
-        rating: 4.8,
-        calories: 250,
-        servings: 4,
-        image: 'https://images.unsplash.com/photo-1562095241-8c6714fd4178?w=500&h=300&fit=crop',
-        ingredients: ['Pescado blanco', 'Limón', 'Cebolla morada', 'Cilantro', 'Ají limo', 'Camote'],
-        description: 'Ceviche fresco con pescado marinado en jugo de limón y ají.'
-    },
-    {
-        id: 9,
-        title: 'Risotto de Champiñones',
-        category: 'Arroces',
-        slug: 'risotto-de-champinones',
-        time: '40 min',
-        difficulty: 'Media',
-        rating: 4.7,
-        calories: 520,
-        servings: 4,
-        image: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?w=500&h=300&fit=crop',
-        ingredients: ['Arroz arborio', 'Champiñones', 'Caldo de verduras', 'Vino blanco', 'Queso parmesano'],
-        description: 'Risotto cremoso de champiñones, un clásico italiano.'
-    },
-    {
-        id: 10,
-        title: 'Smoothie Bowl',
-        category: 'Desayunos',
-        slug: 'smoothie-bowl',
-        time: '10 min',
-        difficulty: 'Fácil',
-        rating: 4.5,
-        calories: 350,
-        servings: 1,
-        image: 'https://images.unsplash.com/photo-1505252585461-04db1eb84625?w=500&h=300&fit=crop',
-        ingredients: ['Plátano', 'Frutas congeladas', 'Leche vegetal', 'Granola', 'Frutos rojos'],
-        description: 'Smoothie bowl nutritivo con frutas y granola.'
-    },
-]
-
-// Categorías disponibles
-export const availableCategories = [
-    { value: 'all', label: 'Todas las categorías' },
-    { value: 'Desayunos', label: 'Desayunos' },
-    { value: 'Ensaladas', label: 'Ensaladas' },
-    { value: 'Pastas', label: 'Pastas' },
-    { value: 'Postres', label: 'Postres' },
-    { value: 'Arroces', label: 'Arroces' },
-    { value: 'Sopas', label: 'Sopas' },
-    { value: 'Pescados', label: 'Pescados' },
-]
-
-// Opciones de dificultad
+// Opciones de dificultad (fijas)
 export const difficultyOptions = [
     { value: 'all', label: 'Todas las dificultades' },
     { value: 'Fácil', label: 'Fácil' },
@@ -164,7 +9,7 @@ export const difficultyOptions = [
     { value: 'Difícil', label: 'Difícil' },
 ]
 
-// Opciones de tiempo
+// Opciones de tiempo (fijas)
 export const timeOptions = [
     { value: 'all', label: 'Cualquier tiempo' },
     { value: '15', label: 'Menos de 15 min' },
@@ -172,7 +17,7 @@ export const timeOptions = [
     { value: '60', label: 'Menos de 60 min' },
 ]
 
-// Opciones de ordenamiento
+// Opciones de ordenamiento (fijas)
 export const sortOptions = [
     { value: 'recent', label: 'Más recientes' },
     { value: 'rating', label: 'Mejor calificadas' },
@@ -189,14 +34,76 @@ export const useRecipes = () => {
     const [sortBy, setSortBy] = useState('recent')
     const [currentPage, setCurrentPage] = useState(1)
     const [isLoading, setIsLoading] = useState(true)
+    const [allRecipes, setAllRecipes] = useState([])
+    const [allCategories, setAllCategories] = useState([
+        { value: 'all', label: 'Todas las categorías' }
+    ])
+    const [categoryMap, setCategoryMap] = useState({})
+    const [totalCount, setTotalCount] = useState(0)
     const itemsPerPage = 9
 
-    // Simular carga
+    //  Mapeo de receta
+    const mapRecipeToFormat = (recipe) => ({
+        id: recipe.id,
+        title: recipe.nombre || 'Receta sin título',
+        slug: recipe.nombre?.toLowerCase().replace(/\s/g, '-') || '',
+        category: recipe.id_categoria ? categoryMap[recipe.id_categoria] || 'General' : 'General',
+        time: `${recipe.tiempo_total || 30} min`,
+        difficulty: recipe.dificultad || 'Media',
+        rating: recipe.rating || 0,
+        calories: recipe.info_nutri?.calorias || 0,
+        servings: recipe.porciones || 4,
+        image: recipe.imagen || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&h=300&fit=crop',
+        description: recipe.descripcion || '',
+        ingredients: recipe.ingredientes?.map(ing => 
+            `${ing.cantidad || ''} ${ing.unidad || ''} ${ing.ingrediente || ''}`.trim()
+        ) || [],
+        author: recipe.usuario?.nombre || 'Usuario',
+        authorId: recipe.id_user,
+        status: recipe.is_deleted ? 'eliminado' : 'publicado',
+        createdAt: recipe.created_at,
+        updatedAt: recipe.updated_at
+    })
+
+    // Cargar datos iniciales
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsLoading(false)
-        }, 500)
-        return () => clearTimeout(timer)
+        const fetchData = async () => {
+            setIsLoading(true)
+            try {
+                // Obtener categorías
+                const categoriesData = await categoryService.getCategories()
+                const mappedCategories = [
+                    { value: 'all', label: 'Todas las categorías' },
+                    ...(categoriesData || []).map(cat => ({
+                        value: cat.nombre,
+                        label: cat.nombre
+                    }))
+                ]
+                setAllCategories(mappedCategories)
+
+                // Mapeo de categorías por ID
+                const map = {}
+                ;(categoriesData || []).forEach(cat => {
+                    map[cat.id] = cat.nombre
+                })
+                setCategoryMap(map)
+
+                // Obtener recetas
+                const recipesData = await recipeService.getRecipes(0, 100)
+                const mappedRecipes = (recipesData || []).map(mapRecipeToFormat)
+                setAllRecipes(mappedRecipes)
+                setTotalCount(mappedRecipes.length)
+
+            } catch (error) {
+                console.error('Error al cargar datos:', error)
+                setAllRecipes([])
+                setTotalCount(0)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        fetchData()
     }, [])
 
     // Resetear página cuando cambian los filtros
@@ -204,75 +111,81 @@ export const useRecipes = () => {
         setCurrentPage(1)
     }, [searchQuery, selectedCategory, selectedDifficulty, selectedTime, sortBy])
 
-    // Filtrar recetas
+    //  Filtrar recetas
     const filteredRecipes = useMemo(() => {
         let filtered = [...allRecipes]
 
-        // Búsqueda por texto
+        // Búsqueda por texto (nombre o descripción)
         if (searchQuery) {
             const query = searchQuery.toLowerCase()
             filtered = filtered.filter(recipe =>
-                recipe.title.toLowerCase().includes(query) ||
-                recipe.description.toLowerCase().includes(query) ||
-                recipe.ingredients.some(ing => ing.toLowerCase().includes(query))
+                recipe.title?.toLowerCase().includes(query) ||
+                recipe.description?.toLowerCase().includes(query)
             )
         }
 
         // Filtrar por categoría
         if (selectedCategory !== 'all') {
-            filtered = filtered.filter(recipe => recipe.category === selectedCategory)
+            filtered = filtered.filter(recipe => 
+                recipe.category === selectedCategory
+            )
         }
 
         // Filtrar por dificultad
         if (selectedDifficulty !== 'all') {
-            filtered = filtered.filter(recipe => recipe.difficulty === selectedDifficulty)
+            filtered = filtered.filter(recipe => 
+                recipe.difficulty === selectedDifficulty
+            )
         }
 
-        // Filtrar por tiempo
+        // Filtrar por tiempo máximo
         if (selectedTime !== 'all') {
             const maxTime = parseInt(selectedTime)
             filtered = filtered.filter(recipe => {
-                const timeValue = parseInt(recipe.time)
+                const timeValue = parseInt(recipe.time) || 0
                 return timeValue <= maxTime
             })
         }
 
-        // Ordenar
+        //  Ordenar
         filtered.sort((a, b) => {
             switch (sortBy) {
                 case 'rating':
-                    return b.rating - a.rating
+                    return (b.rating || 0) - (a.rating || 0)
                 case 'title':
-                    return a.title.localeCompare(b.title)
+                    return (a.title || '').localeCompare(b.title || '')
                 case 'time-asc':
-                    return parseInt(a.time) - parseInt(b.time)
+                    return (parseInt(a.time) || 0) - (parseInt(b.time) || 0)
                 case 'time-desc':
-                    return parseInt(b.time) - parseInt(a.time)
+                    return (parseInt(b.time) || 0) - (parseInt(a.time) || 0)
+                case 'popular':
+                    return (b.views || 0) - (a.views || 0)
                 default: // recent
-                    return b.id - a.id
+                    return new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
             }
         })
 
         return filtered
-    }, [searchQuery, selectedCategory, selectedDifficulty, selectedTime, sortBy])
+    }, [allRecipes, searchQuery, selectedCategory, selectedDifficulty, selectedTime, sortBy])
 
-    // Paginación
+    //  Paginación
     const totalPages = Math.ceil(filteredRecipes.length / itemsPerPage)
     const paginatedRecipes = filteredRecipes.slice(
         (currentPage - 1) * itemsPerPage,
         currentPage * itemsPerPage
     )
 
-    // Limpiar todos los filtros
+    //  Limpiar todos los filtros
     const clearFilters = useCallback(() => {
         setSearchQuery('')
         setSelectedCategory('all')
         setSelectedDifficulty('all')
         setSelectedTime('all')
         setSortBy('recent')
+        setCurrentPage(1)
     }, [])
 
-    // Verificar si hay filtros activos
+    //  Verificar si hay filtros activos
     const hasActiveFilters = searchQuery !== '' ||
         selectedCategory !== 'all' ||
         selectedDifficulty !== 'all' ||
@@ -297,5 +210,6 @@ export const useRecipes = () => {
         setSortBy,
         clearFilters,
         hasActiveFilters,
+        availableCategories: allCategories,
     }
 }

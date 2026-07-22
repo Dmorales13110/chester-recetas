@@ -1,5 +1,7 @@
 
+
 :root {
+  /* Light mode colors */
   --text: #3a3a4a;
   --text-h: #1a1a2e;
   --bg: #ffffff;
@@ -10,22 +12,22 @@
   --input-text: #1a1a2e;
   --text-secondary: #5a5a6e;
   --code-bg: #f0f0f2;
-  --accent: #e67e22;           /* Naranja más oscuro y vibrante */
-  --accent-hover: #f39c12;     /* Naranja hover */
-  --accent-dark: #d35400;      /* Naranja muy oscuro para estados activos */
-  --accent-bg: rgba(230, 126, 34, 0.12);  /* Fondo acento más visible */
-  --accent-soft: #fdf5e6;      /* Fondo naranja suave */
+  --accent: #e67e22;
+  --accent-hover: #f39c12;
+  --accent-dark: #d35400;
+  --accent-bg: rgba(230, 126, 34, 0.12);
+  --accent-soft: #fdf5e6;
   --social-bg: #f8f8fa;
   --shadow: rgba(0, 0, 0, 0.08) 0 2px 12px;
   --shadow-hover: rgba(0, 0, 0, 0.12) 0 4px 20px;
   --modal-bg: #ffffff;
-  --icon-color: #4a4a5a;       /* Color base para iconos más oscuro */
-  --icon-hover: #e67e22;       /* Iconos hover naranja */
-
+  --icon-color: #4a4a5a;
+  --icon-hover: #e67e22;
+  
   --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
-
+  
   font: 16px/145% var(--sans);
   letter-spacing: 0.18px;
   color-scheme: light dark;
@@ -57,13 +59,145 @@
   --icon-hover: #f5a623;
 }
 
-/* Iconos generales */
-svg, .mantine-ThemeIcon-root svg {
-  color: var(--icon-color);
-  transition: all 0.2s ease;
+/* ============================================
+   ESTILOS BASE
+   ============================================ */
+
+* {
+  box-sizing: border-box;
 }
 
-/* Iconos dentro de ThemeIcon */
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================
+   TIPOGRAFÍA
+   ============================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--heading);
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin: 1rem 0;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ============================================
+   SCROLLBAR
+   ============================================ */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4c4cc;
+  border-radius: 10px;
+  border: 2px solid var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+  background: #4a4a5a;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: #f5a623;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+  h2 {
+    font-size: 1.25rem;
+  }
+  body {
+    font-size: 14px;
+  }
+  .mantine-Paper-root {
+    border-radius: 20px !important;
+  }
+  .mantine-Modal-content {
+    border-radius: 20px !important;
+  }
+}
+
+/* ============================================
+   MANTINE - SOBREESCRITURAS
+   ============================================ */
+
+/* Cards */
+.mantine-Card-root {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.mantine-Card-root:hover {
+  box-shadow: var(--shadow-hover) !important;
+  border-color: var(--accent) !important;
+}
+
+/* Paper */
+.mantine-Paper-root {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* Badges */
+.mantine-Badge-root {
+  font-weight: 600 !important;
+  background-color: var(--accent-bg) !important;
+  color: var(--accent) !important;
+  border: 1px solid rgba(230, 126, 34, 0.2) !important;
+}
+
+/* ThemeIcon */
 .mantine-ThemeIcon-root {
   background-color: var(--accent-bg) !important;
   color: var(--accent) !important;
@@ -79,13 +213,7 @@ svg, .mantine-ThemeIcon-root svg {
   background-color: rgba(230, 126, 34, 0.2) !important;
 }
 
-/* Iconos en botones */
-.mantine-Button-root svg {
-  color: currentColor;
-  transition: all 0.2s ease;
-}
-
-/* Iconos en ActionIcon */
+/* ActionIcon */
 .mantine-ActionIcon-root {
   color: var(--icon-color) !important;
   transition: all 0.2s ease !important;
@@ -97,17 +225,7 @@ svg, .mantine-ThemeIcon-root svg {
   transform: translateY(-2px);
 }
 
-/* Iconos en enlaces */
-a svg {
-  transition: all 0.2s ease;
-}
-
-a:hover svg {
-  color: var(--accent);
-  transform: translateX(3px);
-}
-
-/* Botones primarios */
+/* Botones */
 .mantine-Button-root {
   font-weight: 600 !important;
   transition: all 0.2s ease !important;
@@ -116,14 +234,8 @@ a:hover svg {
 
 .mantine-Button-root:hover {
   transform: translateY(-2px);
-  filter: brightness(1.05);
 }
 
-.mantine-Button-root:active {
-  transform: translateY(0);
-}
-
-/* Botón principal (naranja) */
 .mantine-Button-filled {
   background: linear-gradient(135deg, #e67e22, #f39c12) !important;
   border: none !important;
@@ -132,10 +244,8 @@ a:hover svg {
 
 .mantine-Button-filled:hover {
   background: linear-gradient(135deg, #f39c12, #e67e22) !important;
-  box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4) !important;
 }
 
-/* Botón sutil (light) */
 .mantine-Button-light {
   background-color: var(--accent-bg) !important;
   color: var(--accent) !important;
@@ -144,10 +254,8 @@ a:hover svg {
 
 .mantine-Button-light:hover {
   background-color: rgba(230, 126, 34, 0.2) !important;
-  transform: translateY(-2px);
 }
 
-/* Botón sutil (subtle) */
 .mantine-Button-subtle {
   color: var(--text) !important;
   background-color: transparent !important;
@@ -158,7 +266,6 @@ a:hover svg {
   color: var(--accent) !important;
 }
 
-/* Botón outline */
 .mantine-Button-outline {
   border: 2px solid var(--accent) !important;
   color: var(--accent) !important;
@@ -167,83 +274,9 @@ a:hover svg {
 
 .mantine-Button-outline:hover {
   background-color: var(--accent-bg) !important;
-  transform: translateY(-2px);
 }
 
-/* ============================================
-   ICONOS EN NAVBAR ESPECÍFICOS
-   ============================================ */
-
-/* Modo claro - Iconos navbar más oscuros */
-:root .mantine-ActionIcon-root.navbar-icon {
-  color: #4a4a5a !important;
-  background-color: transparent !important;
-}
-
-:root .mantine-ActionIcon-root.navbar-icon:hover {
-  background-color: rgba(230, 126, 34, 0.12) !important;
-  color: #e67e22 !important;
-  transform: translateY(-2px);
-}
-
-:root .mantine-Button-root.navbar-button svg {
-  color: #4a4a5a !important;
-}
-
-:root .mantine-Button-root.navbar-button:hover svg {
-  color: #e67e22 !important;
-}
-
-/* ============================================
-   ICONOS EN CARD Y COMPONENTES
-   ============================================ */
-
-/* Iconos en cards */
-.mantine-Card-root .mantine-ThemeIcon-root svg {
-  color: var(--accent) !important;
-}
-
-/* Iconos en listas */
-.mantine-List-item svg {
-  color: var(--accent) !important;
-}
-
-/* Iconos en badges */
-.mantine-Badge-root svg {
-  color: currentColor;
-  margin-right: 4px;
-}
-
-/* Iconos en inputs */
-.mantine-TextInput-section svg,
-.mantine-Select-section svg {
-  color: var(--icon-color) !important;
-}
-
-.mantine-TextInput-section svg:hover,
-.mantine-Select-section svg:hover {
-  color: var(--accent) !important;
-}
-
-/* ============================================
-   BOTONES EN CARDS Y SECCIONES
-   ============================================ */
-
-/* Botones dentro de cards */
-.mantine-Card-root .mantine-Button-root {
-  width: 100%;
-}
-
-/* Botón "Ver más" */
-.button-view-more {
-  font-weight: 600;
-  transition: all 0.2s ease;
-}
-
-.button-view-more:hover svg {
-  transform: translateX(5px);
-}
-
+/* Inputs */
 :root input,
 :root textarea,
 :root select {
@@ -265,37 +298,78 @@ a:hover svg {
   color: #9a9aae !important;
 }
 
-/* Cards con borde más visible */
-.mantine-Card-root {
-  border: 1px solid var(--border) !important;
-  box-shadow: var(--shadow) !important;
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border: 1px solid #334155 !important;
 }
 
-.mantine-Card-root:hover {
-  box-shadow: var(--shadow-hover) !important;
-  border-color: var(--accent) !important;
+.dark-mode input:focus,
+.dark-mode textarea:focus,
+.dark-mode select:focus {
+  border-color: #f5a623 !important;
+  box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.15) !important;
 }
 
-/* Badges más visibles */
-.mantine-Badge-root {
-  font-weight: 600 !important;
-  background-color: var(--accent-bg) !important;
-  color: var(--accent) !important;
-  border: 1px solid rgba(230, 126, 34, 0.2) !important;
-}
-
-/* Tabs más visibles */
+/* Tabs */
 .mantine-Tabs-tab {
+  color: var(--text) !important;
+  background: transparent !important;
   font-weight: 500 !important;
+  transition: all 0.2s ease !important;
 }
 
 .mantine-Tabs-tab[data-active="true"] {
   color: #e67e22 !important;
   font-weight: 600 !important;
-  border-bottom-width: 2px !important;
+  border-bottom: 2px solid #e67e22 !important;
+  background: transparent !important;
 }
 
-/* Acordeón mejorado */
+.mantine-Tabs-tab:hover:not([data-active="true"]) {
+  background: var(--accent-bg) !important;
+  color: var(--accent) !important;
+}
+
+.mantine-Tabs-tab:hover[data-active="true"] {
+  background: transparent !important;
+  color: #e67e22 !important;
+}
+
+.dark-mode .mantine-Tabs-tab[data-active="true"] {
+  color: #f5a623 !important;
+  border-bottom-color: #f5a623 !important;
+}
+
+.dark-mode .mantine-Tabs-tab:hover:not([data-active="true"]) {
+  background: var(--accent-bg) !important;
+  color: #f5a623 !important;
+}
+
+.dark-mode .mantine-Tabs-tab:hover[data-active="true"] {
+  background: transparent !important;
+  color: #f5a623 !important;
+}
+
+/* Segmented Control */
+.mantine-SegmentedControl-root {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--border) !important;
+}
+
+.mantine-SegmentedControl-label {
+  font-weight: 500 !important;
+  color: var(--text) !important;
+}
+
+.mantine-SegmentedControl-label[data-active="true"] {
+  color: white !important;
+  background: linear-gradient(135deg, #e67e22, #f39c12) !important;
+}
+
+/* Accordion */
 .mantine-Accordion-item {
   border: 1px solid var(--border) !important;
   box-shadow: var(--shadow) !important;
@@ -305,115 +379,7 @@ a:hover svg {
   font-weight: 600 !important;
 }
 
-/* Segmented control mejorado */
-.mantine-SegmentedControl-root {
-  background-color: var(--bg-secondary) !important;
-  border: 1px solid var(--border) !important;
-}
-
-.mantine-SegmentedControl-label {
-  font-weight: 500 !important;
-}
-
-.mantine-SegmentedControl-label[data-active="true"] {
-  color: white !important;
-  background: linear-gradient(135deg, #e67e22, #f39c12) !important;
-}
-
-:root .mantine-Button-root.navbar-button,
-:root button.navbar-button {
-  color: #3a3a4a !important;
-  background-color: transparent !important;
-  font-weight: 500 !important;
-}
-
-:root .mantine-Button-root.navbar-button:hover,
-:root button.navbar-button:hover {
-  background-color: rgba(230, 126, 34, 0.12) !important;
-  color: #e67e22 !important;
-  transform: translateY(-2px);
-}
-
-:root .mantine-ActionIcon-root.navbar-icon {
-  color: #4a4a5a !important;
-  background-color: transparent !important;
-}
-
-:root .mantine-ActionIcon-root.navbar-icon:hover {
-  background-color: rgba(230, 126, 34, 0.12) !important;
-  color: #e67e22 !important;
-  transform: translateY(-2px);
-}
-
-:root .mantine-Avatar-root.navbar-avatar {
-  background-color: rgba(230, 126, 34, 0.12) !important;
-  color: #e67e22 !important;
-  font-weight: 600 !important;
-}
-
-:root .mantine-Avatar-root.navbar-avatar:hover {
-  background-color: rgba(230, 126, 34, 0.2) !important;
-  transform: scale(1.05);
-}
-
-:root .mantine-Menu-item.navbar-menu-item {
-  color: #3a3a4a !important;
-  font-weight: 500 !important;
-}
-
-:root .mantine-Menu-item.navbar-menu-item:hover {
-  background-color: rgba(230, 126, 34, 0.12) !important;
-  color: #e67e22 !important;
-}
-
-:root .mantine-Menu-item.navbar-menu-item:hover svg {
-  color: #e67e22 !important;
-}
-
-:root .mantine-Indicator-indicator {
-  background-color: #e67e22 !important;
-  border: 2px solid white !important;
-  box-shadow: 0 0 0 1px rgba(0,0,0,0.05) !important;
-}
-
-.dark-mode .mantine-Indicator-indicator {
-  border: 2px solid #0f172a !important;
-}
-
-
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c4c4cc;
-  border-radius: 10px;
-  border: 2px solid var(--bg-secondary);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #e67e22;
-}
-
-.dark-mode ::-webkit-scrollbar-thumb {
-  background: #4a4a5a;
-}
-
-.dark-mode ::-webkit-scrollbar-thumb:hover {
-  background: #f5a623;
-}
-
-/* ============================================
-   SELECTS MEJORADOS
-   ============================================ */
-
-/* Modo claro - Selects más visibles */
+/* Selects */
 :root .mantine-Select-dropdown {
   background-color: #ffffff !important;
   border: 1px solid #d4d4dc !important;
@@ -435,6 +401,59 @@ a:hover svg {
   background-color: #e67e22 !important;
   color: white !important;
 }
+
+.dark-mode .mantine-Select-dropdown {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+.dark-mode .mantine-Select-option {
+  color: #cbd5e1 !important;
+}
+
+.dark-mode .mantine-Select-option:hover {
+  background-color: rgba(245, 166, 35, 0.15) !important;
+  color: #f5a623 !important;
+}
+
+.dark-mode .mantine-Select-option[data-selected="true"] {
+  background-color: #f5a623 !important;
+  color: white !important;
+}
+
+/* ============================================
+   BADGES DEL LOGIN
+   ============================================ */
+
+.login-badge,
+.login-badge *,
+.login-badge .mantine-Badge-label,
+.login-badge .mantine-Badge-inner {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.login-badge.mantine-Badge-root {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark-mode .login-badge,
+.dark-mode .login-badge *,
+.dark-mode .login-badge .mantine-Badge-label,
+.dark-mode .login-badge .mantine-Badge-inner {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.dark-mode .login-badge.mantine-Badge-root {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ============================================
+   ANIMACIONES
+   ============================================ */
 
 @keyframes fadeIn {
   from {
@@ -462,107 +481,4 @@ a:hover svg {
 
 .icon-bounce:hover svg {
   animation: iconBounce 0.3s ease;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 1.75rem;
-  }
-  h2 {
-    font-size: 1.25rem;
-  }
-  body {
-    font-size: 14px;
-  }
-  .mantine-Paper-root {
-    border-radius: 20px !important;
-  }
-  .mantine-Modal-content {
-    border-radius: 20px !important;
-  }
-}
-
-/* ============================================
-   BADGES DEL LOGIN - FORZAR LETRAS BLANCAS
-   ============================================ */
-
-.login-badge,
-.login-badge *,
-.login-badge .mantine-Badge-label,
-.login-badge .mantine-Badge-inner {
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-}
-
-.login-badge.mantine-Badge-root {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-}
-
-/* En modo oscuro también se mantienen blancos */
-.dark-mode .login-badge,
-.dark-mode .login-badge *,
-.dark-mode .login-badge .mantine-Badge-label,
-.dark-mode .login-badge .mantine-Badge-inner {
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
-}
-
-.dark-mode .login-badge.mantine-Badge-root {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border: 1px solid rgba(255, 255, 255, 0.15) !important;
-}
-/* ============================================
-   TABS DEL LOGIN - CORREGIR COLORES
-   ============================================ */
-
-/* Tabs en modo claro */
-:root .mantine-Tabs-tab {
-  color: var(--text) !important;
-  background: transparent !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-}
-
-:root .mantine-Tabs-tab[data-active="true"] {
-  color: #e67e22 !important;
-  font-weight: 600 !important;
-  border-bottom: 2px solid #e67e22 !important;
-  background: transparent !important;
-}
-
-:root .mantine-Tabs-tab:hover:not([data-active="true"]) {
-  background: var(--accent-bg) !important;
-  color: var(--accent) !important;
-}
-
-:root .mantine-Tabs-tab:hover[data-active="true"] {
-  background: transparent !important;
-  color: #e67e22 !important;
-}
-
-/* Tabs en modo oscuro */
-.dark-mode .mantine-Tabs-tab {
-  color: var(--text) !important;
-  background: transparent !important;
-  font-weight: 500 !important;
-  transition: all 0.2s ease !important;
-}
-
-.dark-mode .mantine-Tabs-tab[data-active="true"] {
-  color: #f5a623 !important;
-  font-weight: 600 !important;
-  border-bottom: 2px solid #f5a623 !important;
-  background: transparent !important;
-}
-
-.dark-mode .mantine-Tabs-tab:hover:not([data-active="true"]) {
-  background: var(--accent-bg) !important;
-  color: var(--accent) !important;
-}
-
-.dark-mode .mantine-Tabs-tab:hover[data-active="true"] {
-  background: transparent !important;
-  color: #f5a623 !important;
 }

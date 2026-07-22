@@ -2,15 +2,80 @@ import { Title, Button, Group, SimpleGrid, Card, Text, Badge, Image, ActionIcon,
 import { Link } from 'react-router-dom'
 import { ArrowRight, Clock, Zap, Bookmark, Heart, Star } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { favoriteService } from '../../../services'
 
-const FeaturedRecipes = ({ recipes, title = "Favoritos de Chester" }) => {
-    const [saved, setSaved] = useState({})
-    const [liked, setLiked] = useState({})
+const FeaturedRecipes = ({ recipes, title = "Los favoritos de Chester", onFavoriteChange }) => {
     const [hoveredId, setHoveredId] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
+    const [favorites, setFavorites] = useState([])
+    const [liked, setLiked] = useState({})
 
-    const toggleSaved = (id) => setSaved(prev => ({ ...prev, [id]: !prev[id] }))
-    const toggleLiked = (id) => setLiked(prev => ({ ...prev, [id]: !prev[id] }))
+    // Cargar favoritos al montar el componente
+    useEffect(() => {
+        const loadFavorites = async () => {
+            const token = localStorage.getItem('accessToken')
+            if (!token) return
+
+            try {
+                const favData = await favoriteService.getFavorites()
+                setFavorites(favData || [])
+            } catch (error) {
+                console.error('Error al cargar favoritos:', error)
+            }
+        }
+        loadFavorites()
+    }, [])
+
+    // Verificar si una receta es favorita
+    const isFavorite = (recipeId) => {
+        return favorites.some(f => f.id_receta === recipeId || f.receta_id === recipeId)
+    }
+
+    // Alternar favorito con actualización en tiempo real
+    const toggleFavorite = async (recipeId, e) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        const token = localStorage.getItem('accessToken')
+        if (!token) {
+            alert('Inicia sesión para guardar favoritos')
+            return
+        }
+
+        setIsLoading(true)
+        try {
+            await favoriteService.toggleFavorite(recipeId)
+            
+            const isCurrentlyFavorite = isFavorite(recipeId)
+            let updatedFavorites
+            if (isCurrentlyFavorite) {
+                updatedFavorites = favorites.filter(f => 
+                    f.id_receta !== recipeId && f.receta_id !== recipeId
+                )
+            } else {
+                updatedFavorites = [...favorites, { id_receta: recipeId, receta_id: recipeId }]
+            }
+            setFavorites(updatedFavorites)
+            
+            // Notificar al componente padre
+            if (onFavoriteChange) {
+                onFavoriteChange(recipeId, !isCurrentlyFavorite)
+            }
+        } catch (error) {
+            console.error('Error al alternar favorito:', error)
+            const favData = await favoriteService.getFavorites()
+            setFavorites(favData || [])
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const toggleLiked = (id, e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setLiked(prev => ({ ...prev, [id]: !prev[id] }))
+    }
 
     return (
         <>
@@ -24,6 +89,8 @@ const FeaturedRecipes = ({ recipes, title = "Favoritos de Chester" }) => {
                 {recipes.map((recipe, idx) => {
                     const isHovered = hoveredId === recipe.id
                     const isBlurred = hoveredId !== null && hoveredId !== recipe.id
+                    const isFav = isFavorite(recipe.id)
+                    const isLiked = liked[recipe.id] || false
 
                     return (
                         <motion.div
@@ -65,10 +132,21 @@ const FeaturedRecipes = ({ recipes, title = "Favoritos de Chester" }) => {
                                             variant="light"
                                             color="red"
                                             size="lg"
-                                            style={{ position: 'absolute', bottom: 12, right: 12 }}
-                                            onClick={() => toggleLiked(recipe.id)}
+                                            style={{ 
+                                                position: 'absolute', 
+                                                bottom: 12, 
+                                                right: 12,
+                                                backgroundColor: isLiked ? '#ef4444' : 'rgba(0,0,0,0.6)',
+                                                color: 'white',
+                                                transition: 'all 0.3s ease',
+                                            }}
+                                            onClick={(e) => toggleLiked(recipe.id, e)}
+                                            radius="xl"
                                         >
-                                            <Heart size={18} fill={liked[recipe.id] ? 'red' : 'none'} />
+                                            <Heart 
+                                                size={18} 
+                                                fill={isLiked ? 'white' : 'none'} 
+                                            />
                                         </ActionIcon>
                                     </div>
                                 </Card.Section>
@@ -92,32 +170,32 @@ const FeaturedRecipes = ({ recipes, title = "Favoritos de Chester" }) => {
                                         Ver receta
                                     </Button>
                                     <ActionIcon
-                                        variant={saved[recipe.id] ? "filled" : "light"}
-                                        color={saved[recipe.id] ? "teal" : "gray"}
+                                        variant={isFav ? "filled" : "light"}
                                         size={36}
                                         radius="xl"
-                                        onClick={() => toggleSaved(recipe.id)}
+                                        onClick={(e) => toggleFavorite(recipe.id, e)}
+                                        loading={isLoading}
                                         style={{
-                                            backgroundColor: saved[recipe.id]
-                                                ? '#14b8a6'
+                                            backgroundColor: isFav
+                                                ? '#f59e0b'
                                                 : 'var(--accent-bg)',
-                                            color: saved[recipe.id]
+                                            color: isFav
                                                 ? 'white'
                                                 : 'var(--text-secondary)',
-                                            border: saved[recipe.id]
+                                            border: isFav
                                                 ? 'none'
                                                 : '1px solid var(--border)',
                                             transition: 'all 0.2s ease',
                                         }}
                                         onMouseEnter={(e) => {
-                                            if (!saved[recipe.id]) {
+                                            if (!isFav) {
                                                 e.currentTarget.style.backgroundColor = 'var(--accent-bg)'
                                                 e.currentTarget.style.color = 'var(--accent)'
                                                 e.currentTarget.style.borderColor = 'var(--accent)'
                                             }
                                         }}
                                         onMouseLeave={(e) => {
-                                            if (!saved[recipe.id]) {
+                                            if (!isFav) {
                                                 e.currentTarget.style.backgroundColor = 'var(--accent-bg)'
                                                 e.currentTarget.style.color = 'var(--text-secondary)'
                                                 e.currentTarget.style.borderColor = 'var(--border)'
@@ -126,7 +204,7 @@ const FeaturedRecipes = ({ recipes, title = "Favoritos de Chester" }) => {
                                     >
                                         <Bookmark
                                             size={16}
-                                            fill={saved[recipe.id] ? 'white' : 'none'}
+                                            fill={isFav ? 'white' : 'none'}
                                         />
                                     </ActionIcon>
                                 </Group>

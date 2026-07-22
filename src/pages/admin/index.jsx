@@ -7,6 +7,7 @@ import {
 import { useAuth } from '../../context/AuthContext'
 import { Navigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useAdmin } from './hooks/useAdmin'
 import AdminStats from './components/AdminStats'
 import AdminRecipes from './components/AdminRecipes'
 import AdminUsers from './components/AdminUsers'
@@ -22,9 +23,10 @@ const quickActions = [
 ]
 
 export default function AdminPage() {
-    const { isAdmin, isLoading } = useAuth()
+    const { isAdmin, isLoading: authLoading } = useAuth()
+    const { stats, isLoading } = useAdmin()
 
-    if (isLoading) return null
+    if (authLoading || isLoading) return null
     if (!isAdmin) return <Navigate to="/login" replace />
 
     return (
@@ -65,9 +67,17 @@ export default function AdminPage() {
                             <Text c="white" opacity={0.9} size="sm">
                                 Bienvenido al panel administrativo de Chester Recetas
                             </Text>
+                            <Group gap="xs">
+                                <Badge size="sm" variant="white" style={{ background: 'rgba(255,255,255,0.2)', color: 'white' }}>
+                                    🐕 Administrador
+                                </Badge>
+                                <Badge size="sm" variant="white" style={{ background: 'rgba(255,255,255,0.2)', color: 'white' }}>
+                                    📊 {stats.recipes} recetas
+                                </Badge>
+                            </Group>
                         </Stack>
-                        <Button
-                            variant="white"
+                        <Button 
+                            variant="white" 
                             radius="xl"
                             leftSection={<Plus size={16} />}
                             component={Link}
@@ -80,13 +90,10 @@ export default function AdminPage() {
                 </Paper>
 
                 {/* Stats */}
-                <AdminStats />
+                <AdminStats stats={stats} />
 
-                <SimpleGrid
-                    cols={{ base: 2, md: 3, lg: 6 }}
-                    spacing="md"
-                    mb="xl"
-                >
+                {/* Acciones rápidas */}
+                <SimpleGrid cols={{ base: 2, md: 3, lg: 6 }} spacing="md" mb="xl">
                     {quickActions.map((action, idx) => (
                         <motion.div
                             key={idx}
@@ -94,7 +101,7 @@ export default function AdminPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: idx * 0.05 }}
                             whileHover={{ y: -4 }}
-                            style={{ height: '100%' }}
+                            style={{ height: '100%', width: '100%' }}
                         >
                             <Card
                                 component={Link}
@@ -113,7 +120,7 @@ export default function AdminPage() {
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gap: 8,
+                                    gap: '8px',
                                 }}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.borderColor = action.color
@@ -124,30 +131,14 @@ export default function AdminPage() {
                                     e.currentTarget.style.boxShadow = 'none'
                                 }}
                             >
-                                <ThemeIcon
-                                    size="sm"
-                                    radius="xl"
-                                    style={{
-                                        background: action.bg,
-                                        color: action.color,
-                                        width: 28,
-                                        height: 28,
-                                        flexShrink: 0,
-                                    }}
-                                >
-                                    {action.icon}
-                                </ThemeIcon>
-                                <Text
-                                    fw={500}
-                                    size="xs"
-                                    style={{
-                                        color: 'var(--text-h)',
-                                        whiteSpace: 'nowrap',
-                                        fontSize: 12,
-                                    }}
-                                >
-                                    {action.label}
-                                </Text>
+                                <Group gap="xs" style={{ flexWrap: 'nowrap', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+                                    <ThemeIcon size="md" radius="xl" style={{ background: action.bg, color: action.color, width: 32, height: 32, flexShrink: 0 }}>
+                                        {action.icon}
+                                    </ThemeIcon>
+                                    <Text fw={600} size="sm" style={{ color: 'var(--text-h)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {action.label}
+                                    </Text>
+                                </Group>
                             </Card>
                         </motion.div>
                     ))}
@@ -156,13 +147,13 @@ export default function AdminPage() {
                 {/* Grid principal */}
                 <Grid gutter="md">
                     <Grid.Col span={{ base: 12, lg: 8 }}>
-                        <AdminRecipes />
+                        <AdminRecipes recipes={[]} />
                     </Grid.Col>
                     <Grid.Col span={{ base: 12, lg: 4 }}>
-                        <AdminUsers />
+                        <AdminUsers users={[]} />
                     </Grid.Col>
                     <Grid.Col span={12}>
-                        <AdminComments />
+                        <AdminComments comments={[]} />
                     </Grid.Col>
                 </Grid>
             </motion.div>

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { authService } from '../services'
 
 const AuthContext = createContext()
 
@@ -10,51 +11,32 @@ export const useAuth = () => {
     return context
 }
 
-// Usuarios de prueba (mock)
-const MOCK_USERS = [
-    { 
-        id: 1, 
-        name: 'Administrador', 
-        email: 'admin@chester.com', 
-        password: 'admin123', 
-        role: 'admin',
-        avatar: null,
-        createdAt: '2024-01-01'
-    },
-    { 
-        id: 2, 
-        name: 'Usuario Demo', 
-        email: 'usuario@chester.com', 
-        password: 'user123', 
-        role: 'user',
-        avatar: null,
-        createdAt: '2024-06-01'
-    },
-    { 
-        id: 3, 
-        name: 'Chef Master', 
-        email: 'chef@chester.com', 
-        password: 'chef123', 
-        role: 'chef',
-        avatar: null,
-        createdAt: '2024-03-15'
-    },
-]
-
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
 
     // Verificar sesión al cargar
     useEffect(() => {
-        const checkAuth = () => {
-            const savedUser = localStorage.getItem('chester-user')
-            if (savedUser) {
+        const checkAuth = async () => {
+            const token = localStorage.getItem('accessToken')
+            if (token) {
                 try {
-                    const parsedUser = JSON.parse(savedUser)
-                    setUser(parsedUser)
-                } catch {
-                    localStorage.removeItem('chester-user')
+                    const response = await authService.getProfile()
+                    setUser({
+                        id: response.id,
+                        name: response.nombre,
+                        email: response.email,
+                        role: response.role === 1 ? 'admin' : 'user',
+                        avatar: response.foto_perfil,
+                        telefono: response.telefono,
+                        ubicacion: response.ubicacion,
+                        createdAt: response.created_at
+                    })
+                } catch (error) {
+                    console.error('Error al verificar autenticación:', error)
+                    localStorage.removeItem('accessToken')
+                    localStorage.removeItem('refreshToken')
+                    setUser(null)
                 }
             }
             setIsLoading(false)
@@ -62,70 +44,122 @@ export const AuthProvider = ({ children }) => {
         checkAuth()
     }, [])
 
-    // Login
-    const login = (email, password) => {
-        // Buscar usuario en mock
-        const foundUser = MOCK_USERS.find(
-            u => u.email.toLowerCase() === email.toLowerCase() && u.password === password
-        )
-
-        if (foundUser) {
-            // Crear objeto de usuario sin la contraseña
+    const login = async (email, password) => {
+        try {
+            const response = await authService.login({ email, password })
+            
+            // Guardar tokens
+            localStorage.setItem('accessToken', response.access_token)
+            localStorage.setItem('refreshToken', response.refresh_token)
+            
+            // Crear objeto de usuario
             const userData = {
-                id: foundUser.id,
-                name: foundUser.name,
-                email: foundUser.email,
-                role: foundUser.role,
-                avatar: foundUser.avatar,
-                createdAt: foundUser.createdAt
+                id: response.user?.id,
+                name: response.user?.nombre,
+                email: response.user?.email,
+                role: response.user?.role === 1 ? 'admin' : 'user',
+                avatar: response.user?.foto_perfil,
+                telefono: response.user?.telefono,
+                ubicacion: response.user?.ubicacion,
+                createdAt: response.user?.created_at
             }
             
             setUser(userData)
             localStorage.setItem('chester-user', JSON.stringify(userData))
-            
-            // Guardar token mock
-            const token = btoa(`${foundUser.id}:${Date.now()}`)
-            localStorage.setItem('chester-token', token)
             
             return { 
                 success: true, 
                 user: userData,
                 redirect: userData.role === 'admin' ? '/admin' : '/'
             }
-        }
-        
-        return { 
-            success: false, 
-            error: 'Credenciales incorrectas. Verifica tu email y contraseña.' 
+        } catch (error) {
+            console.error('Error en login:', error)
+            
+            // Limpiar tokens en caso de error
+            localStorage.removeItem('accessToken')
+            localStorage.removeItem('refreshToken')
+            
+            let errorMessage = 'Credenciales incorrectas. Verifica tu email y contraseña.'
+            
+            if (error.responseBody) {
+                if (error.responseBody.detail) {
+                    errorMessage = error.responseBody.detail
+                } else if (error.responseBody.message) {
+                    errorMessage = error.responseBody.message
+                }
+            }
+            
+            return { 
+                success: false, 
+                error: errorMessage
+            }
         }
     }
 
-    // Registro
-    const register = (name, email, password, role = 'user') => {
-        // Verificar si el email ya existe
-        if (MOCK_USERS.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+    // Registro adaptado al backend
+    const register = async (name, email, password, telefono = '', ubicacion = '') => {
+        try {
+            const userData = {
+                nombre: name,
+                email: email,
+                password: password,
+                telefono: telefono || '',
+                ubicacion: ubicacion || '',
+                role: 0
+            }
+            
+            const response = await authService.register(userData)
+            
+            return { 
+                success: true, 
+                message: '¡Cuenta creada exitosamente! Por favor inicia sesión.',
+                data: response
+            }
+        } catch (error) {
+            console.error('Error en registro:', error)
+            
+            let errorMessage = 'Error al crear la cuenta. Intenta nuevamente.'
+            
+            if (error.responseBody) {
+                if (error.responseBody.detail) {
+                    errorMessage = error.responseBody.detail
+                } else if (error.responseBody.message) {
+                    errorMessage = error.responseBody.message
+                }
+            }
+            
             return { 
                 success: false, 
-                error: 'Este correo electrónico ya está registrado.' 
+                error: errorMessage
             }
         }
+    }
 
-        // Crear nuevo usuario
-        const newUser = {
-            id: MOCK_USERS.length + 1,
-            name,
-            email,
-            password,
-            role,
-            avatar: null,
-            createdAt: new Date().toISOString().split('T')[0]
-        }
-
-        MOCK_USERS.push(newUser)
-        
-        return { 
-            success: true, 
-            message: '¡Cuenta creada exitosamente! Por favor inicia sesión.' 
+    // Recuperar contraseña
+    const forgotPassword = async (email) => {
+        try {
+            await authService.forgotPassword(email)
+            return { 
+                success: true, 
+                message: 'Se ha enviado un correo con las instrucciones para recuperar tu contraseña.'
+            }
+        } catch (error) {
+            console.error('Error al recuperar contraseña:', error)
+            
+            let errorMessage = 'Error al enviar el correo de recuperación. Intenta nuevamente.'
+            
+            if (error.responseBody) {
+                if (error.responseBody.detail) {
+                    errorMessage = error.responseBody.detail
+                } else if (error.responseBody.message) {
+                    errorMessage = error.responseBody.message
+                }
+            }
+            
+            return { 
+                success: false, 
+                error: errorMessage
+            }
         }
     }
 
@@ -134,13 +168,12 @@ export const AuthProvider = ({ children }) => {
         setUser(null)
         localStorage.removeItem('chester-user')
         localStorage.removeItem('chester-token')
+        localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
         sessionStorage.clear()
     }
 
-    // Verificar si está autenticado
     const isAuthenticated = !!user
-
-    // Verificar roles
     const isAdmin = user?.role === 'admin'
     const isChef = user?.role === 'chef'
     const isUser = user?.role === 'user'
@@ -152,6 +185,7 @@ export const AuthProvider = ({ children }) => {
                 isLoading, 
                 login, 
                 register,
+                forgotPassword,
                 logout, 
                 isAuthenticated,
                 isAdmin,

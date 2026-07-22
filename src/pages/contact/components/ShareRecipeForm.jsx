@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { Paper, TextInput, Textarea, Button, Group, Title, Text, Select, Image, Alert, LoadingOverlay, Chip, ThemeIcon } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { Upload, CheckCircle, X, Clock, Star, ChefHat, List, BookOpen, Sparkles } from 'lucide-react'
+import { recipeService } from '../../../services'
+import { useAuth } from '../../../context/AuthContext'
 
 const categories = [
     'Desayunos', 'Ensaladas', 'Pastas', 'Postres', 'Cenas', 'Sopas', 'Pescados', 'Carnes', 'Quesos'
@@ -14,9 +16,12 @@ const difficulties = [
 ]
 
 const ShareRecipeForm = () => {
+    const { user, isAuthenticated } = useAuth()
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [isSuccess, setIsSuccess] = useState(false)
+    const [error, setError] = useState('')
     const [previewImage, setPreviewImage] = useState(null)
+    const [imageFile, setImageFile] = useState(null)
 
     const form = useForm({
         initialValues: {
@@ -28,8 +33,8 @@ const ShareRecipeForm = () => {
             prepTime: '',
             cookTime: '',
             difficulty: '',
-            authorName: '',
-            authorEmail: '',
+            authorName: user?.name || '',
+            authorEmail: user?.email || '',
             notes: '',
         },
         validate: {
@@ -46,6 +51,7 @@ const ShareRecipeForm = () => {
     const handleImageUpload = (e) => {
         const file = e.target.files?.[0]
         if (file) {
+            setImageFile(file)
             const reader = new FileReader()
             reader.onloadend = () => {
                 setPreviewImage(reader.result)
@@ -54,38 +60,137 @@ const ShareRecipeForm = () => {
         }
     }
 
-    const handleSubmit = async (values) => {
-        setIsSubmitting(true)
-        setTimeout(() => {
-            console.log('Receta enviada:', { ...values, image: previewImage })
-            setIsSubmitting(false)
-            setIsSuccess(true)
-            form.reset()
-            setPreviewImage(null)
-            setTimeout(() => setIsSuccess(false), 5000)
-        }, 2000)
+    const removeImage = () => {
+        setPreviewImage(null)
+        setImageFile(null)
     }
 
+    // Función para preparar los datos de la receta para el backend
+    const prepareRecipeData = (values) => {
+        // Convertir ingredientes de texto a array
+        const ingredientsList = values.ingredients
+            .split('\n')
+            .filter(line => line.trim() !== '')
+            .map(line => {
+                // Intentar parsear cantidad, unidad e ingrediente
+                const match = line.match(/^([\d.]+)\s*([a-zA-Z]+)?\s*(.+)/)
+                if (match) {
+                    return {
+                        cantidad: parseFloat(match[1]),
+                        unidad: match[2] || '',
+                        ingrediente: match[3] || line
+                    }
+                }
+                return {
+                    cantidad: 0,
+                    unidad: '',
+                    ingrediente: line
+                }
+            })
+
+        // Convertir instrucciones de texto a array
+        const instructionsList = values.instructions
+            .split('\n')
+            .filter(line => line.trim() !== '')
+
+        // Preparar el objeto de receta
+        const recipeData = {
+            receta: {
+                nombre: values.recipeName,
+                descripcion: values.description,
+                id_categoria: getCategoryId(values.category),
+                info_nutri: {
+                    calorias: 0,
+                    proteinas: '0g',
+                    carbohidratos: '0g',
+                    grasas: '0g'
+                },
+                instrucciones: instructionsList,
+                consejos: {
+                    conservacion: values.notes || 'Conservar en nevera',
+                    tip_cocina: 'Disfruta de tu creación'
+                },
+                id_user: user?.id || null
+            },
+            ingredientes: ingredientsList
+        }
+
+        return recipeData
+    }
+
+    // Obtener ID de categoría (simplificado - en producción vendría de la API)
+    const getCategoryId = (categoryName) => {
+        const categoryMap = {
+            'Desayunos': 1,
+            'Ensaladas': 2,
+            'Pastas': 3,
+            'Postres': 4,
+            'Cenas': 5,
+            'Sopas': 6,
+            'Pescados': 7,
+            'Carnes': 8,
+            'Quesos': 9
+        }
+        return categoryMap[categoryName] || 1
+    }
+
+    const handleSubmit = async (values) => {
+        setError('')
+        setIsSubmitting(true)
+
+        try {
+            // Verificar autenticación
+            if (!isAuthenticated) {
+                setError('Debes iniciar sesión para compartir una receta')
+                setIsSubmitting(false)
+                return
+            }
+
+            // Preparar datos
+            const recipeData = prepareRecipeData(values)
+            console.log('📦 Datos a enviar:', recipeData)
+
+            // Enviar al backend
+            const response = await recipeService.createRecipe(recipeData)
+            console.log('✅ Receta creada:', response)
+
+            setIsSuccess(true)
+            form.reset()
+            removeImage()
+            
+            setTimeout(() => {
+                setIsSuccess(false)
+            }, 5000)
+
+        } catch (error) {
+            console.error('❌ Error al enviar receta:', error)
+            setError(error.message || 'Error al enviar la receta. Intenta nuevamente.')
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
+    // Estilos para inputs
     const inputStyles = {
         input: {
-            backgroundColor: '#ffffff !important',
-            border: '1px solid #e9ecef',
-            color: '#1a1a2e !important',
+            backgroundColor: 'var(--input-bg) !important',
+            border: '1px solid var(--border) !important',
+            color: 'var(--input-text) !important',
             '&:focus': {
                 borderColor: '#e67e22',
             }
         },
         label: {
-            color: '#1a1a2e',
+            color: 'var(--text-h)',
             marginBottom: 6,
             fontWeight: 500,
         },
         dropdown: {
-            backgroundColor: '#ffffff',
-            borderColor: '#e9ecef',
+            backgroundColor: 'var(--bg)',
+            borderColor: 'var(--border)',
         },
         option: {
-            color: '#1a1a2e',
+            color: 'var(--text)',
             '&[data-selected]': {
                 backgroundColor: '#e67e22',
                 color: 'white',
@@ -148,6 +253,20 @@ const ShareRecipeForm = () => {
                     style={{ background: 'rgba(16, 185, 129, 0.1)', borderColor: '#10b981' }}
                 >
                     ¡Gracias por compartir! Chester revisará tu receta y te notificará cuando esté publicada. 🐕
+                </Alert>
+            )}
+
+            {error && (
+                <Alert
+                    icon={<X size={16} />}
+                    title="Error"
+                    color="red"
+                    mb="lg"
+                    withCloseButton
+                    onClose={() => setError('')}
+                    style={{ background: 'rgba(239, 68, 68, 0.1)', borderColor: '#ef4444' }}
+                >
+                    {error}
                 </Alert>
             )}
 
@@ -233,7 +352,7 @@ const ShareRecipeForm = () => {
 
                 <Title order={4} mb="md" mt="lg" size="sm" style={{ color: 'var(--text-h)' }}>📸 Foto de la receta</Title>
 
-                <Paper withBorder p="md" radius="md" mb="md" ta="center" style={{ background: '#f8f9fa', borderColor: '#e9ecef' }}>
+                <Paper withBorder p="md" radius="md" mb="md" ta="center" style={{ background: 'var(--bg-secondary)', borderColor: 'var(--border)' }}>
                     {previewImage ? (
                         <div style={{ position: 'relative', display: 'inline-block' }}>
                             <Image src={previewImage} height={200} fit="contain" radius="md" />
@@ -242,7 +361,7 @@ const ShareRecipeForm = () => {
                                 color="red"
                                 size="xs"
                                 style={{ position: 'absolute', top: 5, right: 5 }}
-                                onClick={() => setPreviewImage(null)}
+                                onClick={removeImage}
                             >
                                 <X size={14} />
                             </Button>
@@ -261,7 +380,7 @@ const ShareRecipeForm = () => {
                                     Subir imagen
                                 </Button>
                             </label>
-                            <Text size="xs" style={{ color: '#6c757d' }} mt="sm">
+                            <Text size="xs" style={{ color: 'var(--text-secondary)' }} mt="sm">
                                 Formatos: JPG, PNG. Máx 5MB.
                             </Text>
                         </>
@@ -306,6 +425,7 @@ const ShareRecipeForm = () => {
                     size="lg"
                     fullWidth
                     leftSection={<Star size={18} />}
+                    loading={isSubmitting}
                     style={{
                         background: 'linear-gradient(135deg, #e67e22, #f39c12)',
                         border: 'none',
